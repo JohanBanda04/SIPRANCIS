@@ -132,28 +132,35 @@
                                                 $style = 'style="pointer-events:none;opacity:0.6;"';
                                             }
                                             ?>
+                                            <?php
+                                            // Ambil data yang diperlukan (boleh pakai JOIN di controller biar nggak N+1)
+                                            $getNamaPelapor = $this->db->select('nama_lengkap')
+                                                    ->get_where('tbl_user', ['id_user' => $baris->user])
+                                                    ->row()->nama_lengkap ?? '';
+
+                                            $getNamaNotaris = $this->db->select('nama_sub_kategori')
+                                                    ->get_where('tbl_sub_kategori', ['id_sub_kategori' => $baris->id_sub_kategori])
+                                                    ->row()->nama_sub_kategori ?? '';
+
+                                            $getDataAduan = $this->db->select('surat_penolakan, surat_laporan_ke_mpw')
+                                                ->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $baris->id_pengaduan])
+                                                ->row();
+
+                                            $suratPenolakan    = $getDataAduan->surat_penolakan ?? '';
+                                            $suratLaporanKeMpw = $getDataAduan->surat_laporan_ke_mpw ?? '';
+                                            ?>
+
                                             <a href="javascript:;"
                                                class="btn btn-warning btn-xs"
                                                title="Tindak Lanjut"
                                                data-toggle="modal"
                                                data-target="#modalTindakLanjut"
-                                               data-id="<?php echo $baris->id_pengaduan; ?>"
-                                               data-pelapor="<?php
-                                               $getNamaPelapor = $this->db->get_where('tbl_user', ['id_user' => $baris->user])
-                                                       ->row()->nama_lengkap ?? '';
-                                               echo $getNamaPelapor;
-                                               ?>"
-                                               data-notaris="<?php
-                                               $getNamaNotaris = $this->db->get_where('tbl_sub_kategori', ['id_sub_kategori' => $baris->id_sub_kategori])
-                                                       ->row()->nama_sub_kategori ?? '';
-                                               echo $getNamaNotaris;
-                                               ?>"
-                                               data-status="<?php echo $baris->status; ?>"
-                                               data-surat-penolakan="<?php
-                                               $suratPenolakan = $this->db->get_where('tbl_aduan_hasfile',array('pengaduan_id'=>$baris->id_pengaduan))
-                                                   ->row()->surat_penolakan??'';
-                                               echo html_escape($suratPenolakan);
-                                               ?>"
+                                               data-id="<?= $baris->id_pengaduan; ?>"
+                                               data-pelapor="<?= html_escape($getNamaPelapor); ?>"
+                                               data-notaris="<?= html_escape($getNamaNotaris); ?>"
+                                               data-status="<?= html_escape($baris->status); ?>"
+                                               data-surat-penolakan="<?= html_escape($suratPenolakan); ?>"
+                                               data-mpw-laporan="<?= html_escape($suratLaporanKeMpw); ?>"
                                                 <?= $style; ?>>
                                                 <i class="fa fa-share"></i>
                                             </a>
@@ -164,17 +171,17 @@
 
                                         <?php if ($level == 'superadmin') { ?>
                                             <?php if ($baris->status == 'proses') { ?>
-                                                <a href="javascript:;" class="btn btn-primary btn-xs" title="Konfirmasi"
+                                                <a style="display: none;" href="javascript:;" class="btn btn-primary btn-xs" title="Konfirmasi"
                                                    data-toggle="modal"
                                                    onclick="modal_show(<?php echo $baris->id_pengaduan; ?>);"><i
-                                                            class="fa fa-file"></i> Konfirmasi</a>
+                                                            class="fa fa-file"></i> Konfirmasis</a>
                                             <?php } else { ?>
-                                                <a href="javascript:;" class="btn btn-success btn-xs"
-                                                   title="Terkonfirmasi" disabled><i class="fa fa-check"></i> konfirmasi</a>
+                                                <a style="display: none;" href="javascript:;" class="btn btn-success btn-xs"
+                                                   title="Terkonfirmasi" disabled><i class="fa fa-check"></i> konfirmasiz</a>
                                             <?php } ?>
                                         <?php } elseif ($level == 'petugas') { ?>
                                             <?php //if ($baris->status=='konfirmasi'){ ?>
-                                            <a class="btn btn-success btn-xs" title="Edit" data-toggle="modal"
+                                            <a style="display: none;" class="btn btn-success btn-xs" title="Edit" data-toggle="modal"
                                                onclick="modal_show(<?php echo $baris->id_pengaduan; ?>);"><i
                                                         class="fa fa-pencil"></i> Edit</a>
                                             <?php //}else{ ?>
@@ -252,7 +259,13 @@
         const removeFlag          = $('#remove_surat_penolakan');
         const formTindakLanjut    = $('#formTindakLanjut');
 
+        // >>> elemen MPW (A, C)
+        const mpwContainer        = $('#mpwContainer');
+        const mpwExistWrap        = $('#mpwExistWrap');
+        const mpwExistLink        = $('#mpwExistLink');
+
         let suratPenolakanPath = ''; // diisi saat modal dibuka
+        let lampiranMpwPath    = ''; // diisi saat modal dibuka (B, C)
 
         const BASE_URL = <?= json_encode(base_url()); ?>;
         function buildUrl(path) {
@@ -266,13 +279,20 @@
             var val = statusSelect.val();
             <?php if ($this->session->userdata('level') == "petugas"): ?>
             if (val === 'konfirmasi') {
+                // mode KONFIRMASI → tombol LAMPIRAN
                 btnLampiranWrapper.show();
                 lampiranContainer.hide();
                 btnTambahLampiran.show();
 
                 penolakanContainer.hide();
                 suratExistWrap.hide();
+
+                // pastikan MPW juga tersembunyi
+                mpwContainer.hide();
+                mpwExistWrap.hide();
+
             } else if (val === 'tolak') {
+                // mode TOLAK → kontainer penolakan
                 btnLampiranWrapper.hide();
                 lampiranContainer.hide();
 
@@ -283,16 +303,40 @@
                 } else {
                     suratExistWrap.hide();
                 }
+
+                mpwContainer.hide();
+                mpwExistWrap.hide();
+
+            } else if (val === 'selesai') {
+                // mode SELESAI → hanya tampilkan kontainer MPW (C)
+                btnLampiranWrapper.hide();
+                lampiranContainer.hide();
+
+                penolakanContainer.hide();
+                suratExistWrap.hide();
+
+                mpwContainer.show();
+                if (lampiranMpwPath) {
+                    mpwExistLink.attr('href', buildUrl(lampiranMpwPath));
+                    mpwExistWrap.show();
+                } else {
+                    mpwExistWrap.hide();
+                }
+
             } else {
+                // status lain
                 btnLampiranWrapper.hide();
                 lampiranContainer.hide();
                 penolakanContainer.hide();
                 suratExistWrap.hide();
+
+                mpwContainer.hide();
+                mpwExistWrap.hide();
             }
             <?php endif; ?>
         }
 
-        // status berubah
+        // status berubah → set flag hapus penolakan & refresh UI
         statusSelect.on('change', function(){
             const newVal = $(this).val();
             if (newVal === 'tolak') {
@@ -303,15 +347,20 @@
             updateUI();
         });
 
-        // tombol "LAMPIRAN"
+        // tombol "LAMPIRAN" (khusus mode konfirmasi)
         btnTambahLampiran.on('click', function () {
             lampiranContainer.slideDown();
             btnLampiranWrapper.hide();
+
+            // pastikan kontainer lain tersembunyi
             penolakanContainer.hide();
             suratExistWrap.hide();
+
+            mpwContainer.hide();
+            mpwExistWrap.hide();
         });
 
-        // modal dibuka
+        // modal dibuka → isi data dari tombol (B)
         $('#modalTindakLanjut').on('show.bs.modal', function (event) {
             var button  = $(event.relatedTarget);
             var status  = button.data('status') || '';
@@ -319,10 +368,15 @@
             var notaris = button.data('notaris') || '';
             var id      = button.data('id') || '';
 
-            // baca path dari data-surat-penolakan
+            // path existing penolakan
             suratPenolakanPath = button.data('suratPenolakan')
                 || button.attr('data-surat-penolakan')
                 || button.attr('data-surat_penolakan')
+                || '';
+
+            // path existing MPW (B)
+            lampiranMpwPath = button.data('mpwLaporan')
+                || button.attr('data-mpw-laporan')
                 || '';
 
             if (removeFlag.length) removeFlag.val('0'); // reset flag saat modal dibuka
@@ -335,7 +389,7 @@
             updateUI();
         });
 
-        // modal ditutup
+        // modal ditutup → reset UI & input
         $('#modalTindakLanjut').on('hidden.bs.modal', function () {
             lampiranContainer.hide();
             btnLampiranWrapper.hide();
@@ -344,12 +398,18 @@
             penolakanContainer.hide();
             suratExistWrap.hide();
 
+            mpwContainer.hide();
+            mpwExistWrap.hide();
+
             $('#surat_penolakan').val('');
+            $('#lampiran_laporan_mpw').val('');
+
             suratPenolakanPath = '';
+            lampiranMpwPath    = '';
             if (removeFlag.length) removeFlag.val('0');
         });
 
-        // KONFIRMASI saat SUBMIT jika file lama akan dihapus
+        // KONFIRMASI saat SUBMIT jika file penolakan lama akan dihapus (D → sisi klien)
         let isSubmitting = false;
         formTindakLanjut.on('submit', function(e){
             if (isSubmitting) return; // cegah loop
@@ -359,9 +419,10 @@
             const willRemove  = removeFlag.length && removeFlag.val() === '1';
             const hasExisting = !!suratPenolakanPath;
 
-            // Hanya tampilkan peringatan jika: status ≠ tolak, ada file lama, dan removeFlag = 1
+            // Peringatan hanya jika: status ≠ tolak, ada file penolakan lama, dan removeFlag = 1
             if (statusNow !== 'tolak' && hasExisting && willRemove) {
                 e.preventDefault();
+                e.stopImmediatePropagation();
 
                 Swal.fire({
                     title: 'Hapus Surat Penolakan?',
@@ -382,9 +443,8 @@
                 return; // tunggu konfirmasi
             }
 
-            // (Opsional) kalau statusNow === 'tolak' dan TIDAK ada file baru & tidak ada existing,
-            // Anda bisa cegah submit di sisi klien di sini. Controller Anda sudah memvalidasi, jadi ini opsional.
-            // if (statusNow === 'tolak' && !hasExisting && !$('#surat_penolakan').val()) { ... }
+            // (Opsional) Validasi klien untuk status=selesai: bisa pastikan user pilih file MPW jika wajib
+            // if (statusNow === 'selesai' && !$('#lampiran_laporan_mpw').val() && !lampiranMpwPath) { ... }
 
             <?php endif; ?>
         });
@@ -393,6 +453,7 @@
         updateUI();
     });
 </script>
+
 
 
 
