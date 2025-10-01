@@ -1,0 +1,190 @@
+.custom-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.custom-tab {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+.custom-tab.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+.badge-count {
+    background-color: #ffc107;
+    color: #000;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+}
+
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.badge-belum-dibaca {
+    background-color: #f44336; /* merah */
+    color: white;
+}
+
+.badge-belum-diproses {
+    background-color: #ff9800; /* oranye */
+    color: white;
+}
+
+.badge-selesai {
+    background-color: #4caf50; /* hijau */
+    color: white;
+}
+
+.custom-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.custom-tab {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.custom-tab:hover {
+    background-color: #e0e0e0;
+}
+
+.custom-tab.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+.badge-count {
+    background-color: #ffc107;
+    color: #000;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    display: inline-block;
+    min-width: 22px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.badge-status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.badge-belum-dibaca {
+    background-color: #e91e63; /* pink */
+    color: white;
+}
+
+.badge-belum-diproses {
+    background-color: #ff9800; /* oranye */
+    color: white;
+}
+
+.badge-selesai {
+    background-color: #4caf50; /* hijau */
+    color: white;
+}
+
+.badge-default {
+    background-color: #9e9e9e; /* abu-abu */
+    color: white;
+}
+
+
+/* --- Tab Versi Baru --- */
+.custom-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.tab-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #f5f5f5;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-item:hover {
+    background: #e0e0e0;
+}
+
+.tab-item.active {
+    background: #fff;
+    border-bottom: 3px solid #e74c3c; /* garis bawah merah */
+    font-weight: 600;
+}
+
+.label {
+    color: #333;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+}
+
+.badge-gray {
+    background-color: #888;
+}
+
+.badge-blue {
+    background-color: #3498db;
+}
+
+.badge-orange {
+    background-color: #e67e22;
+}
+
+.badge-purple {
+    background-color: #9b59b6;
+}
