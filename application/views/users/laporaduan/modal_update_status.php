@@ -73,30 +73,53 @@
                         </div>
 
                         <!-- container form lampiran -->
+                    <?php
+                    /*styleOverflow*/
+                            $styleOverflow = 'style="
+    display:inline-block;
+    max-width:100%;
+    word-wrap:break-word;
+    white-space:normal;
+    overflow-wrap:break-word;
+"';
+
+                        ?>
                         <div id="lampiranContainer" style="display:none; margin-top:15px;">
                             <h5>Lampiran Tambahan</h5>
+
                             <div class="form-group">
                                 <label>SURAT PEMBERITAHUAN</label>
                                 <input type="file" name="lampiran_pemberitahuan" class="form-control">
+                                <small id="oldPemberitahuan" <?= $styleOverflow ?>></small>
                             </div>
+
                             <div class="form-group">
                                 <label>SURAT UNDANGAN</label>
                                 <input type="file" name="lampiran_undangan" class="form-control">
+                                <small id="oldUndangan" <?= $styleOverflow ?>></small>
                             </div>
+
                             <div class="form-group">
                                 <label>SURAT PEMANGGILAN</label>
                                 <input type="file" name="lampiran_pemanggilan" class="form-control">
+                                <small id="oldPemanggilan" <?= $styleOverflow ?>></small>
                             </div>
+
                             <div class="form-group">
                                 <label>UNDANGAN TTD BAP</label>
                                 <input type="file" name="lampiran_bap_ttd" class="form-control">
+                                <small id="oldBapTtd" <?= $styleOverflow ?>></small>
                             </div>
+
                             <div class="form-group">
                                 <label>BAP PEMERIKSAAN YG TELAH DI TANDATANGANI</label>
                                 <input type="file" name="lampiran_bap_pemeriksaan" class="form-control">
+                                <small id="oldBapPemeriksaan" <?= $styleOverflow ?>></small>
                             </div>
+
                         </div>
                     <?php endif; ?>
+
 
                     <?php if ($this->session->userdata('level') == "petugas" ||$this->session->userdata('level') == "superadmin" ): ?>
                         <div id="mpwContainer" style="display:none; margin-top:15px;">
