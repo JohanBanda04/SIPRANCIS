@@ -1,4 +1,24 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # ------------------------------------------------------
+    # Kalau project ada di subfolder, isi RewriteBase
+    # Misal: /SIPRANCIS/
+    # Kalau project di root domain, cukup pakai /
+    # ------------------------------------------------------
+    RewriteBase /
+
+    # Biarkan kalau file/folder asli ada
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Lempar semua request ke index.php
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# Kalau mod_rewrite gak aktif, fallback ke index.php langsung
+<IfModule !mod_rewrite.c>
+    <Files "index.php">
+        Require all granted
+    </Files>
+</IfModule>
