@@ -170,18 +170,41 @@ class Laporaduan extends CI_Controller
         if (isset($_POST['btnupdate_status'])) {
             $id_pengaduan = $this->input->post('id_pengaduan');
             $status_baru  = $this->input->post('status');
+            $status_lama  = $this->input->post('status_lama'); // ← status lama dari form hidden
+            $remove       = $this->input->post('remove_surat_penolakan'); // flag hapus file
 
+            //echo "<pre>"; print_r($this->input->post()); die;
             if (!empty($id_pengaduan) && !empty($status_baru)) {
-                // --- Update status di tbl_pengaduan
+                // --- Ambil data lama
+                $rowPengaduan = $this->db->get_where('tbl_pengaduan', ['id_pengaduan' => $id_pengaduan])->row();
+
+                // ========================
+                // HAPUS otomatis surat_penolakan jika pindah dari tolak -> selain tolak
+                // ========================
+                if ($this->session->userdata('level') == "petugas"
+                    && $status_lama === 'tolak'
+                    && $status_baru !== 'tolak') {
+
+                    $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
+                    if ($cek && !empty($cek->surat_penolakan)) {
+                        $old = FCPATH . $cek->surat_penolakan;
+                        if (is_file($old)) { @unlink($old); }
+
+                        $this->db->where('pengaduan_id', $id_pengaduan)
+                            ->update('tbl_aduan_hasfile', ['surat_penolakan' => NULL]);
+                    }
+                }
+
+                // ========================
+                // UPDATE status di tbl_pengaduan
+                // ========================
                 $this->db->where('id_pengaduan', $id_pengaduan);
                 $this->db->update('tbl_pengaduan', ['status' => $status_baru]);
 
-                // --- Ambil data pelapor
-                $rowPengaduan = $this->db->get_where('tbl_pengaduan', ['id_pengaduan' => $id_pengaduan])->row();
+                // --- Kirim notifikasi ke pelapor
                 if ($rowPengaduan) {
                     $id_pelapor = $rowPengaduan->user; // id_user pelapor
 
-                    // --- Insert notifikasi
                     $dataNotif = [
                         'pengirim'     => $this->session->userdata('id_user'),
                         'penerima'     => $id_pelapor,
@@ -196,33 +219,28 @@ class Laporaduan extends CI_Controller
                     $this->db->insert('tbl_notif', $dataNotif);
                 }
 
-                /* =========================
-                   Upload lampiran MODE KONFIRMASI (tidak termasuk MPW)
-                   ========================= */
+                // =========================
+                // Upload lampiran KONFIRMASI
+                // =========================
                 if ($this->session->userdata('level') == "petugas" && $status_baru == "konfirmasi") {
-                    // Pastikan folder tujuan ada
                     $uploadPath = './file/aduan_files/';
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0777, true);
-                    }
+                    if (!is_dir($uploadPath)) { mkdir($uploadPath, 0777, true); }
 
                     $config = [
                         'upload_path'   => $uploadPath,
                         'allowed_types' => 'pdf|jpg|jpeg|png|doc|docx',
-                        'max_size'      => 5000, // 5 MB
+                        'max_size'      => 5000,
                     ];
 
                     $this->load->library('upload');
                     $this->upload->initialize($config);
 
-                    // HAPUS MPW dari daftar agar hanya diproses di status 'selesai'
                     $lampiranFields = [
                         'lampiran_pemberitahuan'   => 'surat_pemberitahuan',
                         'lampiran_undangan'        => 'surat_undangan',
                         'lampiran_pemanggilan'     => 'surat_pemanggilan',
                         'lampiran_bap_ttd'         => 'undangan_ttd_bap',
                         'lampiran_bap_pemeriksaan' => 'bap_pemeriksaan_has_ttd',
-                        // 'lampiran_laporan_mpw'   => 'surat_laporan_ke_mpw' // <-- DIPINDAH KE BLOK 'SELESAI'
                     ];
 
                     $dataFile = ['pengaduan_id' => $id_pengaduan];
@@ -230,17 +248,15 @@ class Laporaduan extends CI_Controller
                     foreach ($lampiranFields as $inputName => $dbField) {
                         if (!empty($_FILES[$inputName]['name'])) {
                             $this->upload->initialize($config);
-
                             if ($this->upload->do_upload($inputName)) {
                                 $fileData = $this->upload->data();
-                                $dataFile[$dbField] = 'file/aduan_files/' . $fileData['file_name']; // simpan path relatif
+                                $dataFile[$dbField] = 'file/aduan_files/' . $fileData['file_name'];
                             } else {
                                 log_message('error', 'Upload gagal ' . $inputName . ': ' . $this->upload->display_errors());
                             }
                         }
                     }
 
-                    // Simpan hanya kalau ada file berhasil diupload
                     if (count($dataFile) > 1) {
                         $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
                         if ($cek) {
@@ -251,14 +267,13 @@ class Laporaduan extends CI_Controller
                     }
                 }
 
-                /* =========================
-                   Upload SURAT PENOLAKAN saat status = TOLAK
-                   ========================= */
+                // =========================
+                // Upload SURAT PENOLAKAN saat status = TOLAK
+                // =========================
                 if ($this->session->userdata('level') == "petugas" && $status_baru == "tolak") {
                     $uploadPath = './file/aduan_files/';
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0777, true);
-                    }
+                    if (!is_dir($uploadPath)) { mkdir($uploadPath, 0777, true); }
+
                     $configTolak = [
                         'upload_path'   => $uploadPath,
                         'allowed_types' => 'pdf|jpg|jpeg|png|doc|docx',
@@ -275,7 +290,6 @@ class Laporaduan extends CI_Controller
 
                             $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
 
-                            // hapus file lama (opsional)
                             if ($cek && !empty($cek->surat_penolakan)) {
                                 $old = FCPATH . $cek->surat_penolakan;
                                 if (is_file($old)) { @unlink($old); }
@@ -291,25 +305,17 @@ class Laporaduan extends CI_Controller
                             } else {
                                 $this->db->insert('tbl_aduan_hasfile', $dataFile);
                             }
-                        } else {
-                            $err = strip_tags($this->upload->display_errors('', ''));
-                            $this->session->set_flashdata('msg',
-                                '<div class="alert alert-danger">Gagal mengunggah Surat Penolakan: '.$err.'</div>'
-                            );
-                            redirect('laporaduan/v');
-                            return; // stop eksekusi
                         }
                     }
                 }
 
-                /* =========================
-                   Upload SURAT LAPORAN KE MPW saat status = SELESAI
-                   ========================= */
+                // =========================
+                // Upload SURAT LAPORAN KE MPW saat status = SELESAI
+                // =========================
                 if ($this->session->userdata('level') == "petugas" && $status_baru == "selesai") {
                     $uploadPath = './file/aduan_files/';
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0777, true);
-                    }
+                    if (!is_dir($uploadPath)) { mkdir($uploadPath, 0777, true); }
+
                     $configMPW = [
                         'upload_path'   => $uploadPath,
                         'allowed_types' => 'pdf|jpg|jpeg|png|doc|docx',
@@ -326,7 +332,6 @@ class Laporaduan extends CI_Controller
 
                             $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
 
-                            // hapus file MPW lama (opsional)
                             if ($cek && !empty($cek->surat_laporan_ke_mpw)) {
                                 $old = FCPATH . $cek->surat_laporan_ke_mpw;
                                 if (is_file($old)) { @unlink($old); }
@@ -342,41 +347,23 @@ class Laporaduan extends CI_Controller
                             } else {
                                 $this->db->insert('tbl_aduan_hasfile', $dataFile);
                             }
-                        } else {
-                            $err = strip_tags($this->upload->display_errors('', ''));
-                            $this->session->set_flashdata('msg',
-                                '<div class="alert alert-danger">Gagal mengunggah Surat Laporan ke MPW: '.$err.'</div>'
-                            );
-                            redirect('laporaduan/v');
-                            return; // stop eksekusi
                         }
                     }
                 }
 
-                /* =========================
-                   HAPUS surat_penolakan jika status bergeser dari 'tolak' → selain 'tolak'
-                   dan user memang minta dihapus (flag dari form/JS)
-                   ========================= */
-                $remove = $this->input->post('remove_surat_penolakan');
-                if ($this->session->userdata('level') == "petugas" && $status_baru !== 'tolak' && $remove == '1') {
-                    $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
-                    if ($cek && !empty($cek->surat_penolakan)) {
-                        $old = FCPATH . $cek->surat_penolakan;
-                        if (is_file($old)) { @unlink($old); }
-                        $this->db->where('pengaduan_id', $id_pengaduan)
-                            ->update('tbl_aduan_hasfile', ['surat_penolakan' => NULL]);
-                    }
-                }
-
-                // --- Feedback ke user
-                $this->session->set_flashdata('msg', '<div class="alert alert-success">Status berhasil diperbarui dan notifikasi terkirim.</div>');
+                // --- Feedback
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-success">Status berhasil diperbarui dan notifikasi terkirim.</div>'
+                );
                 redirect('laporaduan/v');
-
             } else {
-                $this->session->set_flashdata('msg', '<div class="alert alert-danger">Data tidak lengkap.</div>');
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-danger">Data tidak lengkap.</div>'
+                );
                 redirect('laporaduan/v');
             }
         }
+
 
 
         if (isset($_POST['btnsimpan'])) {
@@ -864,7 +851,6 @@ class Laporaduan extends CI_Controller
             $status = $data->status;
             echo json_encode(array('pesan_petugas' => $pesan_petugas, 'status' => $status));
         } else {
-            /*tes  push*/
             redirect('404');
         }
     }
