@@ -12,6 +12,8 @@
                 <div class="modal-body">
                     <input type="hidden" name="id_pengaduan" id="modalIdPengaduan">
                     <input type="hidden" name="remove_surat_penolakan" id="remove_surat_penolakan" value="0">
+                    <input type="hidden" name="status_lama" id="modalStatusLama" value="">
+                    <input type="hidden" name="btnupdate_status" value="1">
 
                     <table class="table table-bordered">
                         <tr>
@@ -29,6 +31,7 @@
                                 $level = $this->session->userdata('level');
                                 if ($level == "superadmin") {
                                     $statusOptions = [
+                                        'tolak'     => 'DITOLAK',
                                         'proses'     => 'PROSES',
                                         'dispo_mpd'  => 'DISPOSISI KE MPD',
                                     ];
@@ -92,34 +95,44 @@
                                 <label>BAP PEMERIKSAAN YG TELAH DI TANDATANGANI</label>
                                 <input type="file" name="lampiran_bap_pemeriksaan" class="form-control">
                             </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($this->session->userdata('level') == "petugas" ||$this->session->userdata('level') == "superadmin" ): ?>
+                        <div id="mpwContainer" style="display:none; margin-top:15px;">
+                            <div id="mpwExistWrap" style="display:none; margin-bottom:10px;">
+                                <div class="alert alert-info" style="margin-bottom:8px; padding:8px 12px;">
+                                    <i class="fa fa-paperclip"></i> <strong>File saat ini:</strong>
+                                    <a id="mpwExistLink" href="#" target="_blank" rel="noopener">Lihat / Unduh</a>
+                                </div>
+                            </div>
                             <div class="form-group">
-                                <label>SURAT LAPORAN KE MPW</label>
-                                <input type="file" name="lampiran_laporan_mpw" class="form-control">
+                                <label for="lampiran_laporan_mpw">SURAT LAPORAN KE MPW</label>
+                                <input type="file"
+                                       id="lampiran_laporan_mpw"
+                                       name="lampiran_laporan_mpw"
+                                       class="form-control"
+                                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             </div>
                         </div>
                     <?php endif; ?>
 
-                    <!--PENOLAKAN-->
-                    <?php if ($this->session->userdata('level') == "petugas"): ?>
+                    <?php if ($this->session->userdata('level') == "petugas" || $this->session->userdata('level') == "superadmin"): ?>
                         <div id="penolakanContainer" style="display:none; margin-top:15px;">
                             <h5>Surat Penolakan</h5>
-
                             <div id="suratPenolakanExistWrap" style="display:none; margin-bottom:10px;">
                                 <div class="alert alert-info" style="margin-bottom:8px; padding:8px 12px;">
                                     <i class="fa fa-paperclip"></i> <strong>File saat ini:</strong>
                                     <a id="suratPenolakanExistLink" href="#" target="_blank" rel="noopener">Lihat / Unduh</a>
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label for="surat_penolakan">Unggah Surat Penolakan</label>
                                 <input type="file" id="surat_penolakan" name="surat_penolakan" class="form-control"
                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             </div>
                         </div>
-
                     <?php endif; ?>
-
                 </div>
 
                 <div class="modal-footer">

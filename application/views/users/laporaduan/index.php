@@ -257,7 +257,7 @@
         const suratExistWrap      = $('#suratPenolakanExistWrap');
         const suratExistLink      = $('#suratPenolakanExistLink');
         const removeFlag          = $('#remove_surat_penolakan');
-        const formTindakLanjut    = $('#formTindakLanjut');
+        const formTindakLanjut = $("#formTindakLanjut");
 
         // >>> elemen MPW (A, C)
         const mpwContainer        = $('#mpwContainer');
@@ -277,7 +277,7 @@
 
         function updateUI() {
             var val = statusSelect.val();
-            <?php if ($this->session->userdata('level') == "petugas"): ?>
+            <?php if ($this->session->userdata('level') == "petugas" || $this->session->userdata('level') == "superadmin"): ?>
             if (val === 'konfirmasi') {
                 // mode KONFIRMASI → tombol LAMPIRAN
                 btnLampiranWrapper.show();
@@ -287,7 +287,6 @@
                 penolakanContainer.hide();
                 suratExistWrap.hide();
 
-                // pastikan MPW juga tersembunyi
                 mpwContainer.hide();
                 mpwExistWrap.hide();
 
@@ -371,10 +370,9 @@
             // path existing penolakan
             suratPenolakanPath = button.data('suratPenolakan')
                 || button.attr('data-surat-penolakan')
-                || button.attr('data-surat_penolakan')
                 || '';
 
-            // path existing MPW (B)
+            // path existing MPW
             lampiranMpwPath = button.data('mpwLaporan')
                 || button.attr('data-mpw-laporan')
                 || '';
@@ -382,6 +380,7 @@
             if (removeFlag.length) removeFlag.val('0'); // reset flag saat modal dibuka
 
             $('#modalStatus').val(status);
+            $('#modalStatusLama').val(status); // ← simpan status awal
             $('#modalNamaPelapor').text(pelapor);
             $('#modalNamaNotaris').text(notaris);
             $('#modalIdPengaduan').val(id);
@@ -409,21 +408,18 @@
             if (removeFlag.length) removeFlag.val('0');
         });
 
-        // KONFIRMASI saat SUBMIT jika file penolakan lama akan dihapus (D → sisi klien)
+        // KONFIRMASI saat SUBMIT jika file penolakan lama akan dihapus
         let isSubmitting = false;
-        formTindakLanjut.on('submit', function(e){
+        formTindakLanjut.on("submit", function (e) {
             if (isSubmitting) return; // cegah loop
+            e.preventDefault();
 
-            <?php if ($this->session->userdata('level') == "petugas"): ?>
-            const statusNow   = statusSelect.val();
-            const willRemove  = removeFlag.length && removeFlag.val() === '1';
-            const hasExisting = !!suratPenolakanPath;
+            const statusNow   = $("#modalStatus").val();      // status baru
+            const statusLama  = $("#modalStatusLama").val();  // status lama
+            const hasExisting = $("#hasSuratPenolakan").val() === "1";
 
-            // Peringatan hanya jika: status ≠ tolak, ada file penolakan lama, dan removeFlag = 1
-            if (statusNow !== 'tolak' && hasExisting && willRemove) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-
+            // kondisi: sebelumnya tolak, lalu diubah jadi bukan tolak
+            if (statusLama === "tolak" && statusNow !== "tolak" && hasExisting) {
                 Swal.fire({
                     title: 'Hapus Surat Penolakan?',
                     html: 'Anda mengubah status ke <b>selain DITOLAK</b>.<br>File <i>Surat Penolakan</i> yang sudah ada akan <b>dihapus</b> saat disimpan.',
@@ -436,17 +432,14 @@
                 }).then((res) => {
                     if (res.isConfirmed) {
                         isSubmitting = true;
-                        formTindakLanjut.trigger('submit');
+                        formTindakLanjut.off("submit").submit(); // kirim form beneran
                     }
                 });
-
-                return; // tunggu konfirmasi
+            } else {
+                // langsung submit tanpa konfirmasi
+                isSubmitting = true;
+                formTindakLanjut.off("submit").submit();
             }
-
-            // (Opsional) Validasi klien untuk status=selesai: bisa pastikan user pilih file MPW jika wajib
-            // if (statusNow === 'selesai' && !$('#lampiran_laporan_mpw').val() && !lampiranMpwPath) { ... }
-
-            <?php endif; ?>
         });
 
         // init pertama
@@ -455,8 +448,3 @@
 </script>
 
 
-
-
-
-
-<?php $this->load->view('users/pengaduan/modal_konfirm'); ?>
