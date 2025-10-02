@@ -134,7 +134,7 @@
                                         <!--tes commit lagi-->
                                         <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/e/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
                                                                     class="btn btn-success btn-xs btn-success"
-                                                                    title="Edit Data?">
+                                                                    title="Edit Datax?">
                                             <i class="fa fa-pencil-square"></i>
                                         </a>
 
