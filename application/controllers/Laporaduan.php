@@ -29,6 +29,17 @@ class Laporaduan extends CI_Controller
         $this->load->view('web/footer', $data);
     }
 
+    public function get_files_ajax($id_pengaduan)
+    {
+        $data = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
+
+        if ($data) {
+            echo json_encode($data);
+        } else {
+            echo json_encode([]);
+        }
+    }
+
     public function v($aksi = '', $id = '')
     {
         $id = hashids_decrypt($id);
@@ -114,13 +125,17 @@ class Laporaduan extends CI_Controller
         } elseif ($aksi == 'd') {
             //echo $id; die;
             $p = "detail";
-            $data['judul_web'] = "Detail Pengaduan";
+            $data['judul_web'] = "Detail Aduan";
             $data['query'] = $this->db->get_where("tbl_pengaduan", array('id_pengaduan' => "$id"))->row();
             $data['query_tbl_aduan_hasfile'] = $this->db->get_where('tbl_aduan_hasfile', array('pengaduan_id' => $id))->row();
             //echo "<pre>"; print_r($data['query_tbl_aduan_hasfile']); die;
             if ($data['query']->id_pengaduan == '') {
                 redirect('404');
             }
+        } elseif($aksi=='e'){
+            //echo "edit";die;
+            $p = "edit";
+            $data['judul_web'] = "Edit Aduan";
         } elseif ($aksi == 'h') {
             $cek_data = $this->db->get_where("tbl_pengaduan", array('id_pengaduan' => "$id"));
             if ($cek_data->num_rows() != 0) {
@@ -170,10 +185,9 @@ class Laporaduan extends CI_Controller
         if (isset($_POST['btnupdate_status'])) {
             $id_pengaduan = $this->input->post('id_pengaduan');
             $status_baru  = $this->input->post('status');
-            $status_lama  = $this->input->post('status_lama'); // ← status lama dari form hidden
-            $remove       = $this->input->post('remove_surat_penolakan'); // flag hapus file
+            $status_lama  = $this->input->post('status_lama');
+            $remove       = $this->input->post('remove_surat_penolakan');
 
-            //echo "<pre>"; print_r($this->input->post()); die;
             if (!empty($id_pengaduan) && !empty($status_baru)) {
                 // --- Ambil data lama
                 $rowPengaduan = $this->db->get_where('tbl_pengaduan', ['id_pengaduan' => $id_pengaduan])->row();
@@ -203,7 +217,7 @@ class Laporaduan extends CI_Controller
 
                 // --- Kirim notifikasi ke pelapor
                 if ($rowPengaduan) {
-                    $id_pelapor = $rowPengaduan->user; // id_user pelapor
+                    $id_pelapor = $rowPengaduan->user;
 
                     $dataNotif = [
                         'pengirim'     => $this->session->userdata('id_user'),
@@ -244,13 +258,22 @@ class Laporaduan extends CI_Controller
                     ];
 
                     $dataFile = ['pengaduan_id' => $id_pengaduan];
+                    $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
 
                     foreach ($lampiranFields as $inputName => $dbField) {
                         if (!empty($_FILES[$inputName]['name'])) {
                             $this->upload->initialize($config);
                             if ($this->upload->do_upload($inputName)) {
                                 $fileData = $this->upload->data();
-                                $dataFile[$dbField] = 'file/aduan_files/' . $fileData['file_name'];
+                                $newPath  = 'file/aduan_files/' . $fileData['file_name'];
+
+                                // hapus file lama jika ada
+                                if ($cek && !empty($cek->$dbField)) {
+                                    $old = FCPATH . $cek->$dbField;
+                                    if (is_file($old)) { @unlink($old); }
+                                }
+
+                                $dataFile[$dbField] = $newPath;
                             } else {
                                 log_message('error', 'Upload gagal ' . $inputName . ': ' . $this->upload->display_errors());
                             }
@@ -258,7 +281,6 @@ class Laporaduan extends CI_Controller
                     }
 
                     if (count($dataFile) > 1) {
-                        $cek = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id_pengaduan])->row();
                         if ($cek) {
                             $this->db->where('pengaduan_id', $id_pengaduan)->update('tbl_aduan_hasfile', $dataFile);
                         } else {
@@ -338,8 +360,8 @@ class Laporaduan extends CI_Controller
                             }
 
                             $dataFile = [
-                                'pengaduan_id'           => $id_pengaduan,
-                                'surat_laporan_ke_mpw'   => $pathRel
+                                'pengaduan_id'         => $id_pengaduan,
+                                'surat_laporan_ke_mpw' => $pathRel
                             ];
 
                             if ($cek) {
@@ -363,6 +385,7 @@ class Laporaduan extends CI_Controller
                 redirect('laporaduan/v');
             }
         }
+
 
 
 

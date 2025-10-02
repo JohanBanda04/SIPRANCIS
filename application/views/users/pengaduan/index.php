@@ -78,9 +78,10 @@
                             <tr>
                                 <th width="1%">NO.</th>
                                 <th width="14%">Waktu</th>
-                                <th width="56%">Pengaduan</th>
+                                <th width="40%">Pengaduan</th>
+                                <th width="10%">Terlapor</th>
                                 <th width="14%">Status</th>
-                                <th width="15%">Detail</th>
+                                <th width="31%">Detail</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -91,6 +92,15 @@
                                     <td><b><?php echo $no++; ?>.</b></td>
                                     <td><?php echo $this->Mcrud->tgl_id(date('d-m-Y H:i:s', strtotime($baris->tgl_pengaduan)), 'full'); ?></td>
                                     <td><?php echo $baris->isi_pengaduan; ?></td>
+                                    <td><?php
+                                            $idSubKategori = $this->db->get_where('tbl_pengaduan',array('id_pengaduan'=>$baris->id_pengaduan))
+                                                ->row()->id_sub_kategori??"";
+
+                                        $namaSubKategori = $this->db->get_where('tbl_sub_kategori',array('id_sub_kategori'=>$idSubKategori))
+                                                ->row()->nama_sub_kategori;
+                                            echo $namaSubKategori;
+                                        ?>
+                                    </td>
                                     <td>
                                         <label>
                                             <?php echo $this->Mcrud->cek_status($baris->status); ?>
