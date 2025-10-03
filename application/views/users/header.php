@@ -260,7 +260,7 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                         </a>
 
                     </li>
-                    <li <?php if ($menu == 'persuratan' AND $sub_menu == 'v') {
+                    <li  <?php if ($menu == 'persuratan' AND $sub_menu == 'v') {
                         echo " class='active'";
                     } ?>>
                         <a href="persuratan/v.html">
