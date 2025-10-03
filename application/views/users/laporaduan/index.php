@@ -132,11 +132,41 @@
                                         ?>
 
                                         <!--tes commit lagi-->
-                                        <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/e/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
-                                                                    class="btn btn-success btn-xs btn-success"
-                                                                    title="Edit Datax?">
-                                            <i class="fa fa-pencil-square"></i>
-                                        </a>
+                                        <?php
+                                            $level = $this->session->userdata('level');
+                                        ?>
+
+                                        <?php
+                                            $allowedEdit = ['user'];
+                                            if($baris->status!='proses'){
+                                                $styleAndDisabled = 'style="pointer-events:none;opacity:0.6;" disabled';
+                                                //$href= 'href="javascript:;"';
+
+                                            }
+                                            if(in_array($level,$allowedEdit)){
+                                                ?>
+                                                <a <?= $styleAndDisabled; ?> href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/e/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
+                                                   class="btn btn-success btn-xs btn-success"
+                                                   title="Edited By Netizen?">
+                                                    <i class="fa fa-pencil-square"></i>
+                                                </a>
+                                                <?php
+                                            }
+                                        ?>
+
+                                        <?php
+                                            $allowedEditedByPetugas = ['petugas'];
+                                            if(in_array($level,$allowedEditedByPetugas)){
+                                                ?>
+                                                <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/ep/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
+                                                   class="btn btn-success btn-xs btn-success" style="background-color: #0b2e13!important;"
+                                                   title="Edited By Petugas?">
+                                                    <i class="fa fa-pencil-square"></i>
+                                                </a>
+                                                <?php
+                                            }
+                                        ?>
+
 
                                         <?php
                                         /* tombol tindak lanjut tidak ditampilkan untuk akun masyarakat */
@@ -378,6 +408,8 @@
 
         // modal dibuka
         $('#modalTindakLanjut').on('show.bs.modal', function (event) {
+            //alert("hey");
+            //return false;
             var button = $(event.relatedTarget);
             var status = button.data('status') || '';
             var pelapor = button.data('pelapor') || '';
@@ -387,6 +419,7 @@
             suratPenolakanPath = button.data('suratPenolakan')
                 || button.attr('data-surat-penolakan')
                 || '';
+
 
             lampiranMpwPath = button.data('mpwLaporan')
                 || button.attr('data-mpw-laporan')
@@ -458,6 +491,7 @@
             if (removeFlag.length) removeFlag.val('0');
         });
 
+        /*quncinya*/
         // KONFIRMASI saat SUBMIT
         let isSubmitting = false;
         formTindakLanjut.on("submit", function (e) {
@@ -468,7 +502,7 @@
             const statusLama = $("#modalStatusLama").val();
             const hasExisting = $("#hasSuratPenolakan").val() === "1";
 
-            if (statusLama === "tolak" && statusNow !== "tolak" && hasExisting) {
+            if (statusLama === "tolak" && statusNow !== "tolak" && suratPenolakanPath) {
                 Swal.fire({
                     title: 'Hapus Surat Penolakan?',
                     html: 'Anda mengubah status ke <b>selain DITOLAK</b>.<br>File <i>Surat Penolakan</i> yang sudah ada akan <b>dihapus</b> saat disimpan.',

@@ -10,32 +10,40 @@
                 <div class="panel panel-inverse">
                     <div class="panel-heading">
                         <div class="panel-heading-btn">
-                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
-                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default"
+                               data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"
+                               data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning"
+                               data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger"
+                               data-click="panel-remove"><i class="fa fa-times"></i></a>
                         </div>
-                        <h4 class="panel-title"><?php echo $judul_web." "; ?>
+                        <h4 class="panel-title"><?php echo $judul_web . " "; ?>
                             <label style="color: white">
-                                <?= "(Status : ".strtoupper($dataPengaduan->status).")";?>
+                                <?= "(Status : " . strtoupper($dataPengaduan->status) . ")"; ?>
                             </label>
                         </h4>
                     </div>
                     <div class="panel-body">
                         <?php echo $this->session->flashdata('msg'); ?>
                         <style>
-                            .wajib-isi { color: red; font-weight: bold; }
+                            .wajib-isi {
+                                color: red;
+                                font-weight: bold;
+                            }
                         </style>
 
                         <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
 
                             <div class="alert alert-success">
                                 <i class="fa fa-info-circle"></i>
-                                <strong>Note :</strong> Isikan data aduan dengan jujur & bertanggung jawab. Bersama kita wujudkan NTB yang Bersih & Jujur!
+                                <strong>Note :</strong> Isikan data aduan dengan jujur & bertanggung jawab. Bersama kita
+                                wujudkan NTB yang Bersih & Jujur!
                             </div>
 
                             <?php
-                            $selectedMpd     = $dataPengaduan->petugas ?? '';
+                            $selectedMpd = $dataPengaduan->petugas ?? '';
 
                             /*cari id_data_notaris*/
                             $idSubKategori = $dataPengaduan->id_sub_kategori ?? '';
@@ -70,7 +78,8 @@
                             ?>
 
                             <!-- Hidden ID Pengaduan -->
-                            <input type="hidden" name="id_pengaduan" value="<?php echo $dataPengaduan->id_pengaduan ?? ''; ?>">
+                            <input type="hidden" name="id_pengaduan"
+                                   value="<?php echo $dataPengaduan->id_pengaduan ?? ''; ?>">
                             <!-- Dropdown MPD -->
 
                             <div class="form-group">
@@ -103,7 +112,9 @@
                             <div class="form-group">
                                 <label class="col-lg-12">Uraian Aduan <span class="wajib-isi">*</span></label>
                                 <div class="col-lg-12">
-                                    <textarea name="isi_pengaduan" class="form-control" rows="4" placeholder="Jabarkan dengan jelas..!" required style="text-align: left;"><?php echo isset($dataPengaduan->isi_pengaduan) ? htmlspecialchars($dataPengaduan->isi_pengaduan) : ''; ?></textarea>
+                                    <textarea name="isi_pengaduan" class="form-control" rows="4"
+                                              placeholder="Jabarkan dengan jelas..!" required
+                                              style="text-align: left;"><?php echo isset($dataPengaduan->isi_pengaduan) ? htmlspecialchars($dataPengaduan->isi_pengaduan) : ''; ?></textarea>
                                 </div>
                             </div>
 
@@ -112,7 +123,9 @@
                             <div class="form-group">
                                 <label class="col-lg-12">Keterangan Tambahan <span class="wajib-isi">*</span></label>
                                 <div class="col-lg-12">
-                                    <textarea name="ket_pengaduan" class="form-control" rows="4" placeholder="Keterangan Tambahan.." required><?php echo isset($dataPengaduan->ket_pengaduan) ? htmlspecialchars($dataPengaduan->ket_pengaduan) : ''; ?></textarea>
+                                    <textarea name="ket_pengaduan" class="form-control" rows="4"
+                                              placeholder="Keterangan Tambahan.."
+                                              required><?php echo isset($dataPengaduan->ket_pengaduan) ? htmlspecialchars($dataPengaduan->ket_pengaduan) : ''; ?></textarea>
                                 </div>
                             </div>
 
@@ -134,24 +147,54 @@
                                     <small class="wajib-isi">* (Bermuatkan Surat Aduan, beserta Files Pendukung)</small>
                                 </label>
                                 <div class="col-lg-12">
-                                    <?php if(!empty($dataPengaduan->bukti)): ?>
+                                    <?php if (!empty($dataPengaduan->bukti)): ?>
                                         <p>File saat ini:
-                                            <a <?php echo $styleOverflow; ?> href="<?php echo base_url($dataPengaduan->bukti); ?>" target="_blank">
+                                            <a <?php echo $styleOverflow; ?>
+                                                    href="<?php echo base_url($dataPengaduan->bukti); ?>"
+                                                    target="_blank">
                                                 <?php echo htmlspecialchars(basename($dataPengaduan->bukti)); ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="daduk_aduan" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                                    <input type="file" name="daduk_aduan" class="form-control"
+                                           accept=".jpg,.jpeg,.png,.pdf">
                                     <small>Kosongkan jika tidak ingin mengganti file.</small>
                                 </div>
                             </div>
 
+                            <?php
+                            foreach ($additionalFiles as $fieldName => $label) {
+                                $uploadedFile = $aduanHasFile->$fieldName ?? '';
+                                ?>
+                                <div class="form-group">
+                                    <label class="col-lg-12"><?php echo $label; ?>
+                                        <small class="wajib-isi">* (Upload file jika tersedia)</small>
+                                    </label>
+                                    <div class="col-lg-12">
+                                        <?php if (!empty($uploadedFile)): ?>
+                                            <p>File saat ini:
+                                                <a style="display:inline-block; max-width:100%; word-wrap:break-word; white-space:normal; overflow-wrap:break-word;"
+                                                   href="<?php echo base_url($uploadedFile); ?>" target="_blank">
+                                                    <?php echo htmlspecialchars(basename($uploadedFile)); ?>
+                                                </a>
+                                            </p>
+                                        <?php endif; ?>
+
+                                        <input type="file" name="<?= $fieldName ?>" class="form-control"
+                                               accept=".jpg,.jpeg,.png,.pdf">
+                                        <small>Kosongkan jika tidak ingin mengganti file.</small>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
 
                             <hr>
-                            <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>.html" class="btn btn-default">
+                            <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>.html"
+                               class="btn btn-default">
                                 <i class="fa fa-arrow-left"></i> Kembali
                             </a>
-                            <button type="submit" name="btnupdate_aduan" class="btn btn-primary pull-right">
+                            <button type="submit" name="btnupdate_aduan_bypetugas" class="btn btn-primary pull-right">
                                 <i class="fa fa-save"></i> Update Aduan
                             </button>
                         </form>
@@ -164,11 +207,12 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const mpdSelect = document.getElementById('mpd_area_id');
         const notarisSelect = document.getElementById('id_data_notaris');
         const selectedNotaris = "<?php echo $selectedNotaris; ?>";
         console.log(selectedNotaris);
+
         function loadNotaris(mpdId, callback) {
             if (!mpdId) {
                 notarisSelect.innerHTML = '<option value="">- Pilih Notaris -</option>';
@@ -197,7 +241,7 @@
         }
 
         // ketika MPD berubah
-        mpdSelect.addEventListener('change', function() {
+        mpdSelect.addEventListener('change', function () {
             loadNotaris(this.value);
         });
 
