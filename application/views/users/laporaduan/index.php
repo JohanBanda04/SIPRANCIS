@@ -92,7 +92,8 @@
                             <tr>
                                 <th width="3%">NO.</th>
                                 <th width="15%">Waktu</th>
-                                <th width="40%">Pengaduan</th>
+                                <th width="30%">Pengaduan</th>
+                                <th width="20%">MPD Penanggunjawab</th>
                                 <th width="17%">Status</th>
                                 <th width="25%" style="text-align: center">Detail</th>
                             </tr>
@@ -106,6 +107,21 @@
                                     <td><b><?php echo $no++; ?>.</b></td>
                                     <td><?php echo $this->Mcrud->tgl_id(date('d-m-Y H:i:s', strtotime($baris->tgl_pengaduan)), 'full'); ?></td>
                                     <td><?php echo $baris->isi_pengaduan; ?></td>
+                                    <td><?php
+                                            $idSubKategori = $baris->id_sub_kategori;
+                                            $namaSubKategori = $this->db->get_where('tbl_sub_kategori',array('id_sub_kategori'=>$idSubKategori))
+                                                ->row()->nama_sub_kategori??'';
+                                            $namaSubKategori = trim($namaSubKategori);
+                                            $namaUtama = explode(',',$namaSubKategori)[0];
+                                            $namaUtama=trim($namaUtama);
+                                            $this->db->like('nama',$namaUtama,'after');
+                                            $getIdMpdPetugas = $this->db->get('tbl_data_notaris',1)->row();
+                                            $idMpdPetugasOnly = $getIdMpdPetugas->mpd_area_id??'';
+                                            $namaPetugas = $this->db->get_where('tbl_petugas',array('id_petugas'=>$idMpdPetugasOnly))
+                                                ->row()->nama??'';
+                                            echo $namaPetugas;
+                                        ?>
+                                    </td>
                                     <td><?php echo $this->Mcrud->cek_status($baris->status); ?></td>
                                     <td align="center">
                                         <a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/d/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
