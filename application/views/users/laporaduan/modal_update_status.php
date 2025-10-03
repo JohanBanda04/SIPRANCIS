@@ -14,6 +14,7 @@
                     <input type="hidden" name="remove_surat_penolakan" id="remove_surat_penolakan" value="0">
                     <input type="hidden" name="status_lama" id="modalStatusLama" value="">
                     <input type="hidden" name="btnupdate_status" value="1">
+                    <input type="hidden" id="hasSuratPenolakan" value="0">
 
                     <table class="table table-bordered">
                         <tr>

@@ -6,7 +6,11 @@
       <change beforePath="$PROJECT_DIR$/application/controllers/Laporaduan.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Laporaduan.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/users/laporaduan/edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/users/laporaduan/edit.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/users/laporaduan/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/users/laporaduan/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/file/aduan_files/1759374696_Pedoman_Upacara_Hari_Kesaktian_Pancasila_Tahun_2024_.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/file/aduan_files/1759364477_Pedoman_Upacara_Hari_Kesaktian_Pancasila_Tahun_2024_.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/file/aduan_files/2025092608283314605.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/file/aduan_files/LAPORAN_MONITORING_DAN_EVALUASI_PEMANFAATAN_TEKNOLOGI_INFORMASI_PADA_KANTOR_WILAYAH_KEMENTERIAN_HUKUM_NUSA_TENGGARA_BARAT_PERIODE_TRIWULAN_III_TAHUN_2025.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/file/aduan_files/Undangan.pdf" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -107,22 +111,22 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="php" value="3242" />
+          <entry key="php" value="4766" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PHP" value="3242" />
+          <entry key="PHP" value="4766" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="php" value="8" />
+          <entry key="php" value="12" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PHP" value="8" />
+          <entry key="PHP" value="12" />
         </counts>
       </usages-collector>
     </session>
@@ -134,8 +138,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/application/controllers/Laporaduan.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="114">
-                  <caret line="621" column="72" lean-forward="true" selection-start-line="612" selection-start-column="11" selection-end-line="621" selection-end-column="72" />
+                <state relative-caret-position="63">
+                  <caret line="205" column="42" selection-start-line="205" selection-start-column="26" selection-end-line="205" selection-end-column="42" />
                   <folding>
                     <element signature="e#194#201#1" expanded="true" />
                     <element signature="e#206#213#1" expanded="true" />
@@ -147,13 +151,28 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/edit.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="53">
-                  <caret line="48" column="121" selection-start-line="48" selection-start-column="121" selection-end-line="48" selection-end-column="121" />
+                <state relative-caret-position="136">
+                  <caret line="24" column="71" lean-forward="true" selection-end-line="214" />
                   <folding>
+                    <element signature="n#style#0;n#label#0;n#h4#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#textarea#0;n#div#0;n#div#3;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/edit_bypetugas.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="46">
+                  <caret line="173" column="70" selection-start-line="173" selection-start-column="70" selection-end-line="173" selection-end-column="70" />
+                  <folding>
+                    <element signature="n#style#0;n#label#0;n#h4#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                    <element signature="n#style#0;n#textarea#0;n#div#0;n#div#3;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                    <element signature="n#style#0;n#a#0;n#p#0;n#div#0;n#div#6;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -172,21 +191,22 @@
             <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/index.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="63">
-                  <caret line="405" column="61" selection-start-line="405" selection-start-column="47" selection-end-line="405" selection-end-column="61" />
+                  <caret line="515" column="42" lean-forward="true" selection-start-line="515" selection-start-column="42" selection-end-line="515" selection-end-column="42" />
                   <folding>
-                    <element signature="n#style#0;n#a#4;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                    <element signature="n#style#0;n#a#3;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#a#5;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#a#6;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                    <element signature="n#style#0;n#a#7;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="63">
-                  <caret line="95" column="30" selection-start-line="95" selection-start-column="30" selection-end-line="95" selection-end-column="30" />
+                <state relative-caret-position="17">
+                  <caret line="16" column="62" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="62" />
                   <folding>
                     <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#h4#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -234,20 +254,20 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/application/views/users/persuratan/detail.php">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/application/controllers/Laporaduan.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="71">
-                  <caret line="40" column="44" selection-start-line="40" selection-start-column="44" selection-end-line="40" selection-end-column="44" />
+                <state relative-caret-position="324">
+                  <caret line="752" column="33" selection-start-line="752" selection-start-column="33" selection-end-line="752" selection-end-column="33" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/application/views/users/notif/index.php">
+            <entry file="file://$PROJECT_DIR$/application/views/users/persuratan/detail.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1819">
-                  <caret line="107" column="18" selection-start-line="107" selection-start-column="18" selection-end-line="107" selection-end-column="18" />
+                <state relative-caret-position="71">
+                  <caret line="40" column="44" selection-start-line="40" selection-start-column="44" selection-end-line="40" selection-end-column="44" />
                 </state>
               </provider>
             </entry>
@@ -270,7 +290,7 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/application/views/users/laporan/index.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="48">
@@ -319,7 +339,7 @@
             <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/index.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="6715">
-                  <caret line="541" selection-start-line="541" selection-end-line="541" />
+                  <caret line="575" selection-start-line="575" selection-end-line="575" />
                 </state>
               </provider>
             </entry>
@@ -330,36 +350,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>styleOver</find>
-      <find>styleove</find>
-      <find>edit da</find>
-      <find>modalti</find>
-      <find>mpwLaporan</find>
-      <find>modalTindakLanjut</find>
-      <find>oldPemberitahuan</find>
-      <find>modaltin</find>
-      <find>pilih mpd</find>
-      <find>function get_files_ajax</find>
-      <find>dropdow</find>
-      <find>dropdown mpd</find>
-      <find>js din</find>
-      <find>Normali</find>
-      <find>mpd_area_id</find>
-      <find>uraian</find>
-      <find>btnup</find>
-      <find>pilih mp</find>
-      <find>dropdown m</find>
-      <find>btnsimpa</find>
-      <find>normalisasi</find>
-      <find>btnsimpan</find>
-      <find>pilih no</find>
-      <find>current_url</find>
+      <find>upload file</find>
+      <find>btnupdate_aduan_by</find>
+      <find>upload file adua</find>
+      <find>btnupdate_aduan_byp</find>
+      <find>btnupdate_aduan_bypetugas</find>
+      <find>upload file ad</find>
+      <find>thead</find>
+      <find>detail adua</find>
+      <find>btnupdate_aduan_bype</find>
       <find>function v</find>
-      <find>electedNotaris</find>
-      <find>btnupdate_ad</find>
-      <find>id_data_notaris</find>
-      <find>selectedNotaris</find>
-      <find>ternormal</find>
+      <find>forea</find>
+      <find>hapusz</find>
+      <find>btnupda</find>
+      <find>btnupdate_st</find>
+      <find>btnupdate</find>
+      <find>swal</find>
+      <find>btnupdate_sta</find>
+      <find>show.bs.mo</find>
+      <find>tindakla</find>
+      <find>hasSuratPenolakan</find>
+      <find>modalTindakLanjut</find>
+      <find>show.bs.m</find>
+      <find>get_files_ajax</find>
+      <find>show.bs.modal</find>
+      <find>remove_surat_penolakan</find>
+      <find>formTindakLanjut</find>
+      <find>modalStatusLama</find>
+      <find>modalStatuslama</find>
+      <find>modalStatus</find>
+      <find>btnupdate_status</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -412,10 +432,11 @@
         <option value="$PROJECT_DIR$/application/views/users/laporaduan/detail.php" />
         <option value="$PROJECT_DIR$/application/views/users/pengaduan/index.php" />
         <option value="$PROJECT_DIR$/application/views/users/laporan/index.php" />
-        <option value="$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php" />
-        <option value="$PROJECT_DIR$/application/views/users/laporaduan/index.php" />
-        <option value="$PROJECT_DIR$/application/controllers/Laporaduan.php" />
         <option value="$PROJECT_DIR$/application/views/users/laporaduan/edit.php" />
+        <option value="$PROJECT_DIR$/application/views/users/laporaduan/edit_bypetugas.php" />
+        <option value="$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php" />
+        <option value="$PROJECT_DIR$/application/controllers/Laporaduan.php" />
+        <option value="$PROJECT_DIR$/application/views/users/laporaduan/index.php" />
       </list>
     </option>
   </component>
@@ -684,13 +705,12 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="220189000" />
+    <option name="totallyTimeSpent" value="232941000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17246963" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17246963" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -703,7 +723,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49959514" weight="0.35231316" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49959514" visible="true" weight="0.3113879" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50040483" side_tool="true" weight="0.3291815" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -744,14 +764,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Initial commit of SIPARIS project" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/views/users/dossier_pribadi_bk.php" />
-    <entry file="file://$PROJECT_DIR$/application/views/users/dossier/konfirm_hapus.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/users/dossier/modal_upload.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -1067,22 +1079,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/tambah.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5">
+          <caret line="113" column="35" selection-start-line="113" selection-start-column="35" selection-end-line="113" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/edit.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="24" column="71" lean-forward="true" selection-end-line="214" />
+          <folding>
+            <element signature="n#style#0;n#label#0;n#h4#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#textarea#0;n#div#0;n#div#3;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="232" column="40" lean-forward="true" selection-start-line="232" selection-start-column="40" selection-end-line="232" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/edit_bypetugas.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="173" column="70" selection-start-line="173" selection-start-column="70" selection-end-line="173" selection-end-column="70" />
+          <folding>
+            <element signature="n#style#0;n#label#0;n#h4#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#textarea#0;n#div#0;n#div#3;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#p#0;n#div#0;n#div#6;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/Laporaduan.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="205" column="42" selection-start-line="205" selection-start-column="26" selection-end-line="205" selection-end-column="42" />
+          <folding>
+            <element signature="e#194#201#1" expanded="true" />
+            <element signature="e#206#213#1" expanded="true" />
+            <element signature="e#206#213#1" expanded="true" />
+            <element signature="e#194#201#1" expanded="true" />
+            <element signature="e#194#201#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="63">
-          <caret line="405" column="61" selection-start-line="405" selection-start-column="47" selection-end-line="405" selection-end-column="61" />
+          <caret line="515" column="42" lean-forward="true" selection-start-line="515" selection-start-column="42" selection-end-line="515" selection-end-column="42" />
           <folding>
-            <element signature="n#style#0;n#a#4;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#3;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#a#5;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#a#6;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#7;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/modal_update_status.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="95" column="30" selection-start-line="95" selection-start-column="30" selection-end-line="95" selection-end-column="30" />
+        <state relative-caret-position="17">
+          <caret line="16" column="62" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="62" />
           <folding>
             <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#h4#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -1096,37 +1160,6 @@
             <element signature="n#style#0;n#div#0;n#div#3;n#div#1;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#3;n#div#1;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#button#0;n#div#2;n#form#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/tambah.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5">
-          <caret line="113" column="35" selection-start-line="113" selection-start-column="35" selection-end-line="113" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/Laporaduan.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="621" column="72" lean-forward="true" selection-start-line="612" selection-start-column="11" selection-end-line="621" selection-end-column="72" />
-          <folding>
-            <element signature="e#194#201#1" expanded="true" />
-            <element signature="e#206#213#1" expanded="true" />
-            <element signature="e#206#213#1" expanded="true" />
-            <element signature="e#194#201#1" expanded="true" />
-            <element signature="e#194#201#1" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/users/laporaduan/edit.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="48" column="121" selection-start-line="48" selection-start-column="121" selection-end-line="48" selection-end-column="121" />
-          <folding>
-            <element signature="n#style#0;n#textarea#0;n#div#0;n#div#3;n#form#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
