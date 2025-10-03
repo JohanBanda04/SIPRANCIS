@@ -158,31 +158,60 @@ class Laporaduan extends CI_Controller
             $p = "edit_bypetugas";
             $data['judul_web'] = "Edit Aduan oleh ".strtoupper($this->session->userdata('username'));
         } elseif ($aksi == 'h') {
-            $cek_data = $this->db->get_where("tbl_pengaduan", array('id_pengaduan' => "$id"));
+            $cek_data = $this->db->get_where("tbl_pengaduan", ['id_pengaduan' => $id]);
+
             if ($cek_data->num_rows() != 0) {
-                if ($cek_data->row()->status != 'proses') {
-                    redirect('404');
+                $row = $cek_data->row();
+
+                // hanya boleh hapus kalau status = proses
+                if ($row->status != 'proses') {
+                    //redirect('404');
                 }
-                if ($cek_data->row()->bukti != '') {
-                    unlink($cek_data->row()->bukti);
+
+                // hapus file bukti (kolom di tbl_pengaduan)
+                if (!empty($row->bukti) && is_file(FCPATH . $row->bukti)) {
+                    @unlink(FCPATH . $row->bukti);
                 }
-                $this->db->delete('tbl_notif', array('pengirim' => $id_user, 'id_pengaduan' => $id));
-                $this->db->delete('tbl_pengaduan', array('id_pengaduan' => $id));
-                $this->session->set_flashdata('msg',
-                    '
-							<div class="alert alert-success alert-dismissible" role="alert">
-								 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-									 <span aria-hidden="true">&times;</span>
-								 </button>
-								 <strong>Sukses!</strong> Berhasil dihapus.
-							</div>
-							<br>'
+
+                // cek lampiran di tbl_aduan_hasfile
+                $cekFile = $this->db->get_where('tbl_aduan_hasfile', ['pengaduan_id' => $id])->row();
+                if ($cekFile) {
+                    // hapus semua file yang ada
+                    $fields = ['surat_pemberitahuan','surat_undangan','surat_pemanggilan',
+                        'undangan_ttd_bap','bap_pemeriksaan_has_ttd',
+                        'surat_penolakan','surat_laporan_ke_mpw'];
+
+                    foreach ($fields as $f) {
+                        if (!empty($cekFile->$f) && is_file(FCPATH . $cekFile->$f)) {
+                            @unlink(FCPATH . $cekFile->$f);
+                        }
+                    }
+
+                    // hapus record tbl_aduan_hasfile
+                    $this->db->delete('tbl_aduan_hasfile', ['pengaduan_id' => $id]);
+                }
+
+                // hapus notifikasi terkait
+                $this->db->delete('tbl_notif', ['id_pengaduan' => $id]);
+
+                // hapus data utama pengaduan
+                $this->db->delete('tbl_pengaduan', ['id_pengaduan' => $id]);
+
+                // pesan sukses
+                $this->session->set_flashdata('msg', '
+            <div class="alert alert-success alert-dismissible" role="alert">
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+                 <strong>Sukses!</strong> Pengaduan dan semua lampiran berhasil dihapus.
+            </div><br>'
                 );
                 redirect("laporaduan/v");
+
             } else {
                 redirect('404_content');
             }
-        } else {
+        }else {
             $p = "index";
             $data['judul_web'] = "Laporan Aduan";
         }

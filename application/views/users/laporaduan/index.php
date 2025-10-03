@@ -136,9 +136,19 @@
                                         ?>
 
                                         <?php
-                                        if (in_array($this->session->userdata('level'), ['superadmin', 'petugas', 'notaris'])) {
+                                        $level = $this->session->userdata('level');
+                                        $styles = 'style=""';
+                                        //$styles = 'style="pointer-events:none;opacity:0.6;" disabled';
+                                        if (in_array($level, ['superadmin', 'petugas'])) {
+                                            if($level == 'superadmin' && $baris->status != 'proses'){
+                                                $styles = 'style="pointer-events:none;opacity:0.6;" disabled';
+                                            } else if($level=='petugas' && $baris->status=='proses'){
+                                                $styles = 'style="pointer-events:none;opacity:0.6;" disabled';
+                                            } else if($level=='notaris'){
+                                                $styles = 'style="pointer-events:none;opacity:0.6;" disabled';
+                                            }
                                             ?>
-                                            <a <?= $styleVisibility; ?> href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/h/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
+                                            <a <?= $styles; ?> href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/h/<?php echo hashids_encrypt($baris->id_pengaduan); ?>"
                                                class="btn btn-danger btn-xs btn-delete"
                                                title="Delete data?">
                                                 <i class="fa fa-trash-o"></i>
@@ -432,10 +442,25 @@
             var notaris = button.data('notaris') || '';
             var id = button.data('id') || '';
 
-            suratPenolakanPath = button.data('suratPenolakan')
-                || button.attr('data-surat-penolakan')
-                || '';
-
+            suratPenolakanPath = button.data('suratPenolakan') || button.attr('data-surat-penolakan') || '';
+// Tambahan: kalau status awal = "tolak"
+            if (status === 'tolak') {
+                $('#penolakanContainer').show(); // tampilkan container
+                if (suratPenolakanPath) {
+                    $('#suratPenolakanExistLink')
+                        .attr('href', buildUrl(suratPenolakanPath))
+                        .text(suratPenolakanPath.split('/').pop());
+                    $('#suratPenolakanExistWrap').show();
+                    $('#hasSuratPenolakan').val("1");
+                } else {
+                    $('#suratPenolakanExistWrap').hide();
+                    $('#hasSuratPenolakan').val("0");
+                }
+            } else {
+                $('#penolakanContainer').hide();
+                $('#suratPenolakanExistWrap').hide();
+                $('#hasSuratPenolakan').val("0");
+            }
 
             lampiranMpwPath = button.data('mpwLaporan')
                 || button.attr('data-mpw-laporan')
@@ -448,6 +473,7 @@
             $('#modalNamaPelapor').text(pelapor);
             $('#modalNamaNotaris').text(notaris);
             $('#modalIdPengaduan').val(id);
+
 
             updateUI();
 
@@ -482,6 +508,17 @@
                         $('#oldBapPemeriksaan').html(
                             `File lama: <a href="<?= base_url(); ?>${res.bap_pemeriksaan_has_ttd}" target="_blank">${res.bap_pemeriksaan_has_ttd.split('/').pop()}</a>`
                         );
+                    }
+
+                    // 🆕 Tambahan untuk surat_penolakan
+                    if (res.surat_penolakan) {
+                        $('#suratPenolakanExistLink').attr('href', "<?= base_url(); ?>" + res.surat_penolakan)
+                            .text(res.surat_penolakan.split('/').pop());
+                        $('#suratPenolakanExistWrap').show();
+                        $('#hasSuratPenolakan').val("1");
+                    } else {
+                        $('#suratPenolakanExistWrap').hide();
+                        $('#hasSuratPenolakan').val("0");
                     }
                 }
             });

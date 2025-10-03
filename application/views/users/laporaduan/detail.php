@@ -95,7 +95,7 @@
                             <button id="btnLampiran"
                                     type="button" class="btn btn-info btn-xs"
                                     onclick="toggleLampiran()">
-                                Lihat Lampiran
+                                Lihat Lampiran (oleh MPD)
                             </button>
                         </td>
                     </tr>
@@ -211,10 +211,10 @@
 
               if (el.style.display === "none") {
                   el.style.display = "block";
-                  btn.innerText = "Sembunyikan Lampiran"; // ubah teks tombol
+                  btn.innerText = "Sembunyikan Lampiran (oleh MPD)"; // ubah teks tombol
               } else {
                   el.style.display = "none";
-                  btn.innerText = "Lihat Lampiran"; // kembali ke teks awal
+                  btn.innerText = "Lihat Lampiran (oleh MPD)"; // kembali ke teks awal
               }
           }
       </script>

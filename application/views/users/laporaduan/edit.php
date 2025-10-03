@@ -182,7 +182,7 @@
                     data.forEach(item => {
                         const opt = document.createElement("option");
                         opt.value = item.id_data_notaris;
-                        opt.textContent = item.nama;
+                        opt.textContent = item.nama.toUpperCase();
                         if (item.id_data_notaris == selectedNotaris) {
                             opt.selected = true;
                         }
