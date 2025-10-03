@@ -118,7 +118,7 @@
                 data.forEach(item => {
                     const opt = document.createElement("option");
                     opt.value = item.id_data_notaris;
-                    opt.textContent = item.nama;
+                    opt.textContent = item.nama.toUpperCase();
                     notarisSelect.appendChild(opt);
                 });
             })
