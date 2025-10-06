@@ -60,9 +60,10 @@
                                     <tr>
                                         <th width="1%">No.</th>
                                         <th hidden width="15%">Tanggal</th>
-                                        <th width="50%">Keterangan Laporan</th>
+                                        <th width="30%">Keterangan Laporan</th>
                                         <th width="16%">STATUS</th>
-                                        <th width="15%">Opsi</th>
+                                        <th width="20%">Notaris</th>
+                                        <th width="30%">Opsi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -74,6 +75,12 @@
 																				<td hidden><?php echo $this->Mcrud->tgl_id(date('d-m-Y H:i:s', strtotime($baris->tgl_laporan)),'full'); ?></td>
 																				<td><?php echo $baris->ket_laporan; ?></td>
 																				<td><?php echo $this->Mcrud->cek_status($baris->status); ?></td>
+																				<td><?php
+                                                                                        $namaNotaris = $this->db->get_where('tbl_data_notaris',array('id_user'=>$baris->notaris))
+                                                                                            ->row()->nama??"";
+                                                                                        echo $namaNotaris;
+                                                                                    ?>
+                                                                                </td>
 																				<td align="center">
 																					<a href="<?php echo strtolower($this->uri->segment(1)); ?>/<?php echo strtolower($this->uri->segment(2)); ?>/d/<?php echo hashids_encrypt($baris->id_laporan); ?>"
                                                                                        class="btn btn-info btn-xs" title="Detail"><i class="fa fa-search"></i></a>

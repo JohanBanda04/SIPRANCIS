@@ -1,0 +1,15 @@
+### HOSTINGER LITESHIELD RECAPTCHA, DO NOT REMOVE THIS LINE ###
+RewriteEngine On
+LsRecaptcha 100
+RewriteRule .* - [E=verifycaptcha:drop]
+### HOSTINGER LITESHIELD RECAPTCHA, DO NOT REMOVE THIS LINE ###
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+php_value upload_max_filesize  512M
+php_value post_max_size 256M
+
+
+
+
