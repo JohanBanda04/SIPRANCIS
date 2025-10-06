@@ -187,7 +187,7 @@
                 <?php if ($query->status=='proses'){ ?>
                    <a href="javascript:;" class="btn btn-primary" title="Konfirmasi" data-toggle="modal" onclick="modal_show(<?php echo $query->id_laporan; ?>);" style="float:right;"><i class="fa fa-file"></i> Konfirmasi</a>
                 <?php }else{ ?>
-                  <a href="javascript:;" class="btn btn-success" title="Terkonfirmasi" disabled style="float:right;"><i class="fa fa-check"></i> konfirmasi</a>
+<!--                  <a href="javascript:;" class="btn btn-success" title="Terkonfirmasi" disabled style="float:right;"><i class="fa fa-check"></i> konfirmasi</a>-->
                 <?php } ?>
               <?php }elseif ($level=='petugas'){ ?>
                 <?php //if ($query->status=='konfirmasi'){ ?>

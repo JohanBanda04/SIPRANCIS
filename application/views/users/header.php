@@ -121,7 +121,7 @@ $sub_menu3 = strtolower($this->uri->segment(3));
 
             <!-- begin header navigation right -->
             <ul class="nav navbar-nav navbar-right">
-                <li  class="dropdown">
+                <li class="dropdown">
                     <a href="javascript:;" data-toggle="dropdown" class="dropdown-toggle icon" aria-expanded="false">
                         <i class="ion-ios-bell"></i>
                         <span class="label" id="jml_notif_bell">0</span>
@@ -229,10 +229,10 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                     <li <?php if ($menu == 'pengaduan' AND $sub_menu == 'v') {
                         echo " class='active'";
                     } ?>>
-                        <a href="pengaduan/v.html">
-                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>
-                            <span>Aduan Masyarakat</span>
-                        </a>
+<!--                        <a href="pengaduan/v.html">-->
+<!--                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>-->
+<!--                            <span>Aduan Masyarakat</span>-->
+<!--                        </a>-->
                     </li>
                     <li <?php if ($menu == 'notaris') {
                         echo " class='active'";
@@ -260,7 +260,7 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                         </a>
 
                     </li>
-                    <li  <?php if ($menu == 'persuratan' AND $sub_menu == 'v') {
+                    <li <?php if ($menu == 'persuratan' AND $sub_menu == 'v') {
                         echo " class='active'";
                     } ?>>
                         <a href="persuratan/v.html">
@@ -339,10 +339,10 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                     <li <?php if ($menu == 'pengaduan' AND $sub_menu == 'v') {
                         echo " class='active'";
                     } ?>>
-                        <a href="pengaduan/v.html">
-                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>
-                            <span>Aduan Masyarakat</span>
-                        </a>
+<!--                        <a href="pengaduan/v.html">-->
+<!--                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>-->
+<!--                            <span>Aduan Masyarakat</span>-->
+<!--                        </a>-->
                     </li>
                     <li <?php if ($menu == 'notaris') {
                         echo " class='active'";
@@ -367,10 +367,10 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                     <li <?php if ($menu == 'pengaduan' AND $sub_menu == 'v') {
                         echo " class='active'";
                     } ?>>
-                        <a href="pengaduan/v.html">
-                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>
-                            <span>Pengaduan</span>
-                        </a>
+<!--                        <a href="pengaduan/v.html">-->
+<!--                            <div class="icon-img"><i class="fa fa-comments bg-blue"></i></div>-->
+<!--                            <span>Pengaduan</span>-->
+<!--                        </a>-->
                     </li>
                     <li class="nav-header"></li>
                     <li <?php if ($menu == 'notaris') {
@@ -382,33 +382,51 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                         </a>
                     </li>
                 <?php endif; ?>
-                <li <?php if ($menu == 'laporaduan' AND $sub_menu == 'v') {
-                    echo " class='active'";
-                } ?>>
-                    <a href="laporaduan/v.html">
-                        <div class="icon-img"><i class="fa fa-bullhorn bg-red"
-                                                 style="background-color: #e509ff !important;"></i>
-                        </div>
-                        <span>Laporan Aduanm</span>
-                    </a>
-                </li>
 
-                <li <?php if ($menu == 'cuti' AND $sub_menu == 'v') {
-                    echo " class='active'";
-                } ?>>
-                    <!--menu view for mpd & notaris-->
-                    <?php
-                    $display = '';
-                    if($level=="user"){
-                        $display = 'display: none;';
-                    }
+                <?php
+                $cutiMenuAllowed = ['user', 'notaris', 'petugas'];
+                if (in_array($level, $cutiMenuAllowed)) {
                     ?>
-                    <a style="<?= $display?>" href="cuti/v.html">
-                        <div class="icon-img"><i class="fa fa-umbrella bg-blue"></i></div>
-                        <span>Permohonan Cuti</span>
-                    </a>
+                    <li <?php if ($menu == 'laporaduan' AND $sub_menu == 'v') {
+                        echo " class='active'";
+                    } ?>>
+                        <a href="laporaduan/v.html">
+                            <div class="icon-img"><i class="fa fa-bullhorn bg-red"
+                                                     style="background-color: #e509ff !important;"></i>
+                            </div>
+                            <span>Laporan Aduan</span>
+                        </a>
+                    </li>
+                    <?php
+                }
+                ?>
 
-                </li>
+
+                <?php
+                $allowedMenuCuties = ['petugas','notaris'];
+
+                if(in_array($level,$allowedMenuCuties)){
+                    ?>
+                    <li <?php if ($menu == 'cuti' AND $sub_menu == 'v') {
+                        echo " class='active'";
+                    } ?>>
+                        <!--menu view for mpd & notaris-->
+                        <?php
+                        $display = '';
+                        if ($level == "user") {
+                            $display = 'display: none;';
+                        }
+                        ?>
+                        <a style="<?= $display ?>" href="cuti/v.html">
+                            <div class="icon-img"><i class="fa fa-umbrella bg-blue"></i></div>
+                            <span>Permohonan Cuties</span>
+                        </a>
+
+                    </li>
+                    <?php
+                }
+                ?>
+
                 <!-- MENU NOTARIS -->
                 <?php if ($level == 'notaris'): ?>
                     <li <?php if ($menu == 'laporan' AND $sub_menu == 'v') {

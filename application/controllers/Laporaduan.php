@@ -91,7 +91,7 @@ class Laporaduan extends CI_Controller
         if ($aksi == 'proses' or $aksi == 'konfirmasi' or $aksi == 'selesai') {
             $this->db->where('status', $aksi);
         }
-        $this->db->order_by('id_pengaduan', 'DESC');
+        $this->db->order_by('id_pengaduan','desc');
         $data['query'] = $this->db->get("tbl_pengaduan");
 
         /*ambil data mpd dari tbl_petugas*/
@@ -216,9 +216,11 @@ class Laporaduan extends CI_Controller
             $data['judul_web'] = "Laporan Aduan";
         }
 
+        //echo $p; die;
         $this->load->view('users/header', $data);
         $this->load->view("users/laporaduan/$p", $data);
         $this->load->view('users/footer');
+
 
         date_default_timezone_set('Asia/Jakarta');
         $tgl = date('Y-m-d H:i:s');
@@ -846,75 +848,7 @@ class Laporaduan extends CI_Controller
 
 
 
-        if (isset($_POST['btnkirim'])) {
-            $id_pengaduan = htmlentities(strip_tags($this->input->post('id_pengaduan')));
-            $data_lama = $this->db->get_where('tbl_pengaduan', array('id_pengaduan' => $id_pengaduan))->row();
-            $simpan = 'y';
-            $pesan = '';
-            if ($level == 'superadmin') {
-                $id_petugas = htmlentities(strip_tags($this->input->post('id_petugas')));
-                $data = array(
-                    'petugas' => $id_petugas,
-                    'status' => 'konfirmasi',
-                    'tgl_konfirmasi' => $tgl
-                );
-                $pesan = 'Berhasil dikirim ke petugas';
-                $this->Mcrud->kirim_notif('superadmin', $id_petugas, $id_pengaduan, 'superadmin_ke_petugas');
-                $this->Mcrud->kirim_notif('superadmin', $data_lama->user, $id_pengaduan, 'superadmin_ke_user');
-            } else {
-                $pesan_petugas = htmlentities(strip_tags($this->input->post('pesan_petugas')));
-                $status = htmlentities(strip_tags($this->input->post('status')));
-                $file = $data_lama->file_petugas;
-                $pesan = 'Berhasil disimpan';
-                if ($_FILES['file']['error'] <> 4) {
-                    if (!$this->upload->do_upload('file')) {
-                        $simpan = 'n';
-                        $pesan = htmlentities(strip_tags($this->upload->display_errors('<p>', '</p>')));
-                    } else {
-                        if ($file != '') {
-                            unlink("$file");
-                        }
-                        $gbr = $this->upload->data();
-                        $filename = "$lokasi/" . $gbr['file_name'];
-                        $file = preg_replace('/ /', '_', $filename);
-                    }
-                }
 
-                $data = array(
-                    'pesan_petugas' => $pesan_petugas,
-                    'status' => $status,
-                    'file_petugas' => $file,
-                    'tgl_selesai' => $tgl
-                );
-                $this->Mcrud->kirim_notif($data_lama->petugas, $data_lama->user, $id_pengaduan, 'petugas_ke_user');
-            }
-
-            if ($simpan == 'y') {
-                $this->db->update('tbl_pengaduan', $data, array('id_pengaduan' => $id_pengaduan));
-                $this->session->set_flashdata('msg',
-                    '
-							<div class="alert alert-success alert-dismissible" role="alert">
-								 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-									 <span aria-hidden="true">&times;</span>
-								 </button>
-								 <strong>Sukses!</strong> ' . $pesan . '.
-							</div>
-						 <br>'
-                );
-            } else {
-                $this->session->set_flashdata('msg',
-                    '
-							<div class="alert alert-warning alert-dismissible" role="alert">
-								 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-									 <span aria-hidden="true">&times;</span>
-								 </button>
-								 <strong>Gagal!</strong> ' . $pesan . '.
-							</div>
-						 <br>'
-                );
-            }
-            redirect('pengaduan/v');
-        }
 
     }
 

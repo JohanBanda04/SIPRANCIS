@@ -72,7 +72,20 @@
                     <tr>
                       <th valign="top"><b></b>STATUS LAPORAN</b></th>
                       <th valign="top">:</th>
-                      <td><?php echo $this->Mcrud->cek_status($query->status); ?></td>
+                        <?php
+                        if ($query->status == 'proses') {
+                            $styleBackground = 'style="background-color: blue; color: white; border-radius: 5px;"';
+                        } else if ($query->status == 'konfirmasi') {
+                            $styleBackground = 'style="background-color: orange; color: white; border-radius: 5px;"';
+                        } else if ($query->status == 'selesai') {
+                            $styleBackground = 'style="background-color: green; color: white; border-radius: 5px;"';
+                        }
+
+                        ?>
+                      <td>
+                          <label for="" <?= $styleBackground ?>><?= $query->status; ?></label>
+
+                      </td>
                     </tr>
                   </tbody>
                 </table>
