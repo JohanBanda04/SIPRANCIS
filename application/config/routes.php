@@ -2,68 +2,106 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
-| -------------------------------------------------------------------------
-| URI ROUTING
-| -------------------------------------------------------------------------
-| This file lets you re-map URI requests to specific controller functions.
-|
-| Typically there is a one-to-one relationship between a URL string
-| and its corresponding controller class/method. The segments in a
-| URL normally follow this pattern:
-|
-|	example.com/class/method/id/
-|
-| In some instances, however, you may want to remap this relationship
-| so that a different class/function is called than the one
-| corresponding to the URL.
-|
-| Please see the user guide for complete details:
-|
-|	https://codeigniter.com/user_guide/general/routing.html
-|
-| -------------------------------------------------------------------------
-| RESERVED ROUTES
-| -------------------------------------------------------------------------
-|
-| There are three reserved routes:
-|
-|	$route['default_controller'] = 'welcome';
-|
-| This route indicates which controller class should be loaded if the
-| URI contains no data. In the above example, the "welcome" class
-| would be loaded.
-|
-|	$route['404_override'] = 'errors/page_missing';
-|
-| This route will tell the Router which controller/method to use if those
-| provided in the URL cannot be matched to a valid route.
-|
-|	$route['translate_uri_dashes'] = FALSE;
-|
-| This is not exactly a route, but allows you to automatically route
-| controller and method names that contain dashes. '-' isn't a valid
-| class or method name character, so it requires translation.
-| When you set this option to TRUE, it will replace ALL dashes in the
-| controller and method URI segments.
-|
-| Examples:	my-controller/index	-> my_controller/index
-|		my-controller/my-method	-> my_controller/my_method
+|--------------------------------------------------------------------------
+| DEFAULT ROUTE
+|--------------------------------------------------------------------------
 */
 $route['default_controller'] = 'web';
 $route['404_override'] = 'web/error_not_found';
-$route['dashboard']    = 'users/index';
-$route['page']         = 'web/index';
-$route['page/(:any)']  = 'web/index/$1';
-$route['page/pengurus/(:any)']  = 'web/pengurus/$1';
-$route['index']        = 'web/index';
-$route['profile']      = 'users/profile';
-$route['ubah_pass']    = 'users/ubah_pass';
-$route['dossier_pribadi']    = 'users/dossier_pribadi';
-$route['tambahnotarisvl']    = 'tambahnotaris/v/l';
-$route['unggah_file']    = 'users/unggah_file';
-$route['kas/masuk']    = 'data/kas/masuk';
-$route['kas/keluar']   = 'data/kas/keluar';
-$route['kas/rekap']    = 'data/kas/rekap';
-$route['download']     = 'web/download';
-$route['kontak']       = 'web/kontak';
 $route['translate_uri_dashes'] = FALSE;
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD UMUM (Role lama)
+|--------------------------------------------------------------------------
+*/
+$route['dashboard'] = 'users/index';
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN WEB (Publik)
+|--------------------------------------------------------------------------
+*/
+$route['page']                    = 'web/index';
+$route['page/(:any)']             = 'web/index/$1';
+$route['page/pengurus/(:any)']    = 'web/pengurus/$1';
+$route['index']                   = 'web/index';
+$route['profile']                 = 'users/profile';
+$route['ubah_pass']               = 'users/ubah_pass';
+$route['dossier_pribadi']         = 'users/dossier_pribadi';
+$route['tambahnotarisvl']         = 'tambahnotaris/v/l';
+$route['unggah_file']             = 'users/unggah_file';
+
+/*
+|--------------------------------------------------------------------------
+| MODUL KAS
+|--------------------------------------------------------------------------
+*/
+$route['kas/masuk']               = 'data/kas/masuk';
+$route['kas/keluar']              = 'data/kas/keluar';
+$route['kas/rekap']               = 'data/kas/rekap';
+
+/*
+|--------------------------------------------------------------------------
+| WEB UMUM
+|--------------------------------------------------------------------------
+*/
+$route['download']                = 'web/download';
+$route['kontak']                  = 'web/kontak';
+
+/*
+|--------------------------------------------------------------------------
+| ROLE BARU MKN (Penting)
+|--------------------------------------------------------------------------
+*/
+$route['sekretariat/dashboard']   = 'sekretariat/dashboard';
+$route['anggota_mkn/dashboard']   = 'anggota_mkn/dashboard';
+$route['aph/dashboard']           = 'aph/dashboard';
+
+// Form permohonan APH
+$route['aph/tambah_permohonan']      = 'aph/tambah_permohonan';
+$route['aph/tambah_permohonan.html'] = 'aph/tambah_permohonan';
+$route['aph/simpan_permohonan']      = 'aph/simpan_permohonan';
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE KOMPATIBILITAS / BACKWARD COMPATIBILITY
+|--------------------------------------------------------------------------
+*/
+$route['sekretariat/dashboard.html'] = 'sekretariat/dashboard';
+$route['anggota/dashboard']          = 'anggota_mkn/dashboard';
+$route['anggota/dashboard.html']     = 'anggota_mkn/dashboard';
+$route['aph/dashboard.html']         = 'aph/dashboard';
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE LOGIN DAN REGISTER (Fix login.html issue)
+|--------------------------------------------------------------------------
+| Ini memastikan semua URL lama yang mengarah ke .html tetap diarahkan ke controller.
+|--------------------------------------------------------------------------
+*/
+$route['web/login']                 = 'web/login';
+$route['web/login.html']            = 'web/login';
+
+$route['web/user_register']         = 'web/user_register';
+$route['web/user_register.html']    = 'web/user_register';
+
+$route['web/index.html']            = 'web/index';
+$route['web/beranda.html']          = 'web/index';
+
+// Tambahan untuk root akses langsung
+$route['login']                     = 'web/login';
+$route['login.html']                = 'web/login';
+$route['user_register']             = 'web/user_register';
+$route['user_register.html']        = 'web/user_register';
+/*
+|--------------------------------------------------------------------------
+| ROUTE LOGOUT (Fix logout.html issue)
+|--------------------------------------------------------------------------
+*/
+$route['web/logout'] = 'web/logout';
+$route['web/logout.html'] = 'web/logout';
+
+// Untuk jaga-jaga kalau ada link langsung tanpa /web/
+$route['logout'] = 'web/logout';
+$route['logout.html'] = 'web/logout';

@@ -193,12 +193,47 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                 <li class="has-sub<?php if ($menu == 'users' AND $sub_menu == '' or $menu == 'dashboard') {
                     echo " active";
                 } ?>">
-                    <a href="dashboard.html">
+                    <?php
+                    $cek    = $this->db->get_where('tbl_user', ['id_user' => $this->session->userdata('id_user')])->row();
+                    $level  = $cek->level;
+
+                    // Tentukan link dashboard sesuai level pengguna
+                    switch ($level) {
+                        case 'sekretariat_mkn':
+                            $dashboard_link = base_url('sekretariat/dashboard.html');
+                            break;
+                        case 'anggota_mkn':
+                            $dashboard_link = base_url('anggota_mkn/dashboard.html');
+                            break;
+                        case 'aph':
+                            $dashboard_link = base_url('aph/dashboard.html');
+                            break;
+                        default:
+                            // Untuk notaris, petugas, dan user lama → tetap seperti semula
+                            $dashboard_link = base_url('dashboard.html');
+                            break;
+                    }
+                    ?>
+
+                <li>
+                    <a href="<?= $dashboard_link ?>">
                         <i class="ion-ios-pulse-strong"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
+                </li>
+
                 <!-- MENU UMUM SAMPAI SINI -->
+                <!-- MENU KHUSUS UNTUK APH -->
+                <?php if ($level == 'aph'): ?>
+                    <li <?php if ($menu == 'aph' AND $sub_menu == 'tambah_permohonan') { echo "class='active'"; } ?>>
+                        <a href="<?= base_url('aph/tambah_permohonan.html'); ?>">
+                            <div class="icon-img"><i class="fa fa-plus-circle bg-blue"></i></div>
+                            <span>Tambah Permohonan</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <!-- AKHIR MENU KHUSUS UNTUK APH -->
 
                 <!-- MENU SUPER ADMIN -->
                 <?php if ($level == 'superadmin'): ?>
@@ -396,18 +431,18 @@ $sub_menu3 = strtolower($this->uri->segment(3));
                 <li <?php if ($menu == 'cuti' AND $sub_menu == 'v') {
                     echo " class='active'";
                 } ?>>
-                    <!--menu view for mpd & notaris-->
                     <?php
                     $display = '';
-                    if($level=="user"){
+
+                    // Sembunyikan menu cuti untuk APH dan USER
+                    if ($level == "aph" || $level == "user") {
                         $display = 'display: none;';
                     }
                     ?>
-                    <a style="<?= $display?>" href="cuti/v.html">
+                    <a style="<?= $display ?>" href="cuti/v.html">
                         <div class="icon-img"><i class="fa fa-umbrella bg-blue"></i></div>
                         <span>Permohonan Cuti</span>
                     </a>
-
                 </li>
                 <!-- MENU NOTARIS -->
                 <?php if ($level == 'notaris'): ?>

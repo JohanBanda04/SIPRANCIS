@@ -109,30 +109,22 @@ class Web extends CI_Controller
                 );
                 $this->db->insert('tbl_data_user', $data2);
 
-                // $this->session->set_userdata('username', "$username");
-                // $this->session->set_userdata('id_user', "$id_user");
-                // $this->session->set_userdata('level', "$level");
-
                 $this->session->set_flashdata('msg',
-                    '
-									 <div class="alert alert-success alert-dismissible" role="alert">
-											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-											<strong>Registrasi Sukses!</strong> Silahkan login, dan lengkapi profil Anda.
-									 </div>
-									<br>'
+                    '<div class="alert alert-success alert-dismissible" role="alert">
+                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                         <strong>Registrasi Sukses!</strong> Silahkan login, dan lengkapi profil Anda.
+                     </div><br>'
                 );
             } else {
                 $this->session->set_flashdata('msg',
-                    '
-									<div class="alert alert-danger alert-dismissible" role="alert">
-										 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-											 <span aria-hidden="true">&times;</span>
-										 </button>
-										 <strong>GAGAL!</strong> ' . $pesan . '.
-								 	</div>
-								 <br>'
+                    '<div class="alert alert-danger alert-dismissible" role="alert">
+                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                         <strong>GAGAL!</strong> ' . $pesan . '.
+                     </div><br>'
                 );
                 redirect("web/user_register");
             }
@@ -146,7 +138,6 @@ class Web extends CI_Controller
     {
         $ceks = $this->session->userdata('username');
         if (isset($ceks)) {
-            // $this->load->view('404_content');
             redirect('dashboard');
         } else {
             $data['judul_web'] = "Halaman Login - " . $this->Mcrud->judul_web();
@@ -165,13 +156,12 @@ class Web extends CI_Controller
 
                 if ($jumlah == 0) {
                     $this->session->set_flashdata('msg',
-                        '
-									 <div class="alert alert-danger alert-dismissible" role="alert">
-									 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-											<strong>Username "' . $username . '"</strong> belum terdaftar.
-									 </div>'
+                        '<div class="alert alert-danger alert-dismissible" role="alert">
+                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                             </button>
+                             <strong>Username "' . $username . '"</strong> belum terdaftar.
+                         </div>'
                     );
                     redirect('web/login');
                 } elseif ($query->row()->aktif == '0') {
@@ -185,13 +175,12 @@ class Web extends CI_Controller
                         $pesan = "tidak aktif";
                     }
                     $this->session->set_flashdata('msg',
-                        '
-	 								<div class="alert alert-danger alert-dismissible" role="alert">
-	 									 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-	 										 <span aria-hidden="true">&times;</span>
-	 									 </button>
-	 									 <strong>Username "' . $username . '"</strong> ' . $pesan . '.
-	 								</div>'
+                        '<div class="alert alert-danger alert-dismissible" role="alert">
+                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                             </button>
+                             <strong>Username "' . $username . '"</strong> ' . $pesan . '.
+                         </div>'
                     );
                     redirect('web/login');
                 } else {
@@ -200,21 +189,40 @@ class Web extends CI_Controller
                     if ($cekpass <> $pass) {
                         $this->session->set_flashdata('msg',
                             '<div class="alert alert-warning alert-dismissible" role="alert">
-													 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-																<span aria-hidden="true">&times;</span>
-															</button>
-															<strong>Username atau Password Salah!</strong>.
-													 </div>'
+                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                     <span aria-hidden="true">&times;</span>
+                                 </button>
+                                 <strong>Username atau Password Salah!</strong>.
+                             </div>'
                         );
                         redirect('web/login');
                     } else {
-
                         $this->session->set_userdata('username', "$cekun");
                         $this->session->set_userdata('id_user', "$row->id_user");
                         $this->session->set_userdata('level', "$row->level");
                         $this->session->set_userdata('jml_notif_bell', "0");
 
-                        redirect('dashboard');
+                        // 🔥 Redirect sesuai role
+                        switch ($row->level) {
+                            case 'sekretariat_mkn':
+                                redirect('sekretariat/dashboard');
+                                break;
+                            case 'anggota_mkn':
+                                redirect('anggota/dashboard');
+                                break;
+                            case 'aph':
+                                redirect('aph/dashboard');
+                                break;
+                            case 'admin':
+                                redirect('admin/dashboard');
+                                break;
+                            case 'user':
+                                redirect('user/dashboard');
+                                break;
+                            default:
+                                redirect('dashboard');
+                                break;
+                        }
                     }
                 }
             }
@@ -234,7 +242,6 @@ class Web extends CI_Controller
     {
         $this->load->view('404_content');
     }
-
 
     public function notif_bell($aksi = '')
     {
@@ -295,7 +302,6 @@ class Web extends CI_Controller
             } else if($level=="petugas"){
                 $data['query'] = $this->db->get_where('tbl_notif', array('penerima' => $id_user));
             }
-            //$data['query'] = $this->db->get_where('tbl_notif', array('penerima' => $id_user));
 
             if ($aksi == 'h' or $aksi == 'h_all') {
                 if ($aksi == 'h') {
@@ -320,14 +326,12 @@ class Web extends CI_Controller
                         }
                     }
                     $this->session->set_flashdata('msg',
-                        '
-							<div class="alert alert-success alert-dismissible" role="alert">
-								 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-									 <span aria-hidden="true">&times;</span>
-								 </button>
-								 <strong>Sukses!</strong> Berhasil dihapus.
-							</div>
-							<br>'
+                        '<div class="alert alert-success alert-dismissible" role="alert">
+                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                             </button>
+                             <strong>Sukses!</strong> Berhasil dihapus.
+                         </div><br>'
                     );
                     redirect("web/notif");
                 } else {

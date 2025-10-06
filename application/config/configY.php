@@ -23,7 +23,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://tokolangganan.co.id/alexproject';
+
+$config['base_url'] = preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/';
+
+$config['programmer'] = 'abu Kayla';
+$config['email']      = 'cariprojecthalal@gmail.com';
+$config['no_hp']      = '081 1340 1340';
 
 /*
 |--------------------------------------------------------------------------
