@@ -141,6 +141,17 @@
                             <?php } else { echo "-"; } ?>
                         </td>
                     </tr>
+                    <tr>
+                        <th valign="top">SK Cuti oleh MPD</th>
+                        <th valign="top">:</th>
+                        <td>
+                            <?php if (!empty($query->sk_cuti_bympd)) { ?>
+                                <a href="<?php echo base_url($query->sk_cuti_bympd); ?>" target="_blank" class="btn btn-xs btn-info">
+                                    <i class="fa fa-download"></i> Lihat File
+                                </a>
+                            <?php } else { echo "-"; } ?>
+                        </td>
+                    </tr>
 
                     <tr>
                         <th valign="top">Dokumen Pendukung Lainnya</th>

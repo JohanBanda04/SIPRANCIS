@@ -45,11 +45,27 @@
 
                             <!-- Pemohon Cuti -->
                             <div class="form-group">
-                                <label class="col-lg-12">Pemohon Cuti <span class="text-danger">*</span></label>
+                                <label class="col-lg-12">Pemohon Cutie <span class="text-danger">*</span></label>
                                 <div class="col-lg-12">
-                                    <select class="form-control default-select2" name="id_pemohon" id="id_pemohon" required>
+                                    <select class="form-control default-select2" name="id_pemohon" id="id_pemohon"
+                                            required>
                                         <!--<option value="">- Pilih -</option>-->
                                         <?php foreach ($getNotaris as $not): ?>
+                                            <?php
+                                            $level = $this->session->userdata('level');
+                                            if ($level == 'petugas') {
+                                                if ($query->user_id == $not->id_user) {
+                                                    ?>
+                                                    <option value="<?= $not->id_user ?>"
+                                                        <?= ($query->user_id == $not->id_user) ? 'selected="selected"' : 'disabled' ?>>
+                                                        <?= $not->nama ?>
+                                                    </option>
+                                                    <?php
+                                                }
+                                                ?>
+                                            <?php
+                                            }
+                                            ?>
                                             <option value="<?= $not->id_user ?>"
                                                 <?= ($this->session->userdata('id_user') == $not->id_user) ? 'selected="selected"' : 'disabled' ?>>
                                                 <?= $not->nama ?>
@@ -95,7 +111,8 @@
                             <div class="form-group">
                                 <label class="col-lg-12">Keterangan <span class="text-danger">*</span></label>
                                 <div class="col-lg-12">
-                                    <textarea name="ket_laporan" class="form-control" rows="4" placeholder="Keterangan..."
+                                    <textarea name="ket_laporan" class="form-control" rows="4"
+                                              placeholder="Keterangan..."
                                               required><?= $query->keterangan ?></textarea>
 
                                 </div>
@@ -107,12 +124,14 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->surat_permohonan_cuti)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->surat_permohonan_cuti) ?>" target="_blank">
+                                            File saat ini: <a href="<?= base_url($query->surat_permohonan_cuti) ?>"
+                                                              target="_blank">
                                                 <?= basename($query->surat_permohonan_cuti) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="surat_permohonan_cuti" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="surat_permohonan_cuti" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>
@@ -123,12 +142,14 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->sk_pengangkatan_notaris)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->sk_pengangkatan_notaris) ?>" target="_blank">
+                                            File saat ini: <a href="<?= base_url($query->sk_pengangkatan_notaris) ?>"
+                                                              target="_blank">
                                                 <?= basename($query->sk_pengangkatan_notaris) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="sk_pengangkatan_notaris" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="sk_pengangkatan_notaris" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>
@@ -139,12 +160,14 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->berita_acara_sumpah)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->berita_acara_sumpah) ?>" target="_blank">
+                                            File saat ini: <a href="<?= base_url($query->berita_acara_sumpah) ?>"
+                                                              target="_blank">
                                                 <?= basename($query->berita_acara_sumpah) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="berita_acara_sumpah" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="berita_acara_sumpah" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>
@@ -155,12 +178,14 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->sertifikat_cuti_asli)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->sertifikat_cuti_asli) ?>" target="_blank">
+                                            File saat ini: <a href="<?= base_url($query->sertifikat_cuti_asli) ?>"
+                                                              target="_blank">
                                                 <?= basename($query->sertifikat_cuti_asli) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="sertifikat_cuti_asli" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="sertifikat_cuti_asli" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>
@@ -171,12 +196,33 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->surat_penunjukan_notaris_pengganti)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->surat_penunjukan_notaris_pengganti) ?>" target="_blank">
+                                            File saat ini: <a
+                                                    href="<?= base_url($query->surat_penunjukan_notaris_pengganti) ?>"
+                                                    target="_blank">
                                                 <?= basename($query->surat_penunjukan_notaris_pengganti) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="surat_penunjukan_notaris_pengganti" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="surat_penunjukan_notaris_pengganti" class="form-control"
+                                           accept=".pdf,.doc,.docx">
+                                    <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
+                                </div>
+                            </div>
+
+                            <!--sk cuti oleh mpd-->
+                            <div class="form-group">
+                                <label class="col-lg-12">SK Cuti oleh MPD</label>
+                                <div class="col-lg-12">
+                                    <?php if (!empty($query->sk_cuti_bympd)): ?>
+                                        <p>
+                                            File saat ini: <a href="<?= base_url($query->sk_cuti_bympd) ?>"
+                                                              target="_blank">
+                                                <?= basename($query->sk_cuti_bympd) ?>
+                                            </a>
+                                        </p>
+                                    <?php endif; ?>
+                                    <input type="file" name="sk_cuti_bympd" id="sk_cuti_bympd" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>
@@ -187,12 +233,14 @@
                                 <div class="col-lg-12">
                                     <?php if (!empty($query->lamp_syarat_cuti)): ?>
                                         <p>
-                                            File saat ini: <a href="<?= base_url($query->lamp_syarat_cuti) ?>" target="_blank">
+                                            File saat ini: <a href="<?= base_url($query->lamp_syarat_cuti) ?>"
+                                                              target="_blank">
                                                 <?= basename($query->lamp_syarat_cuti) ?>
                                             </a>
                                         </p>
                                     <?php endif; ?>
-                                    <input type="file" name="lamp_syarat_cuti" class="form-control" accept=".pdf,.doc,.docx">
+                                    <input type="file" name="lamp_syarat_cuti" class="form-control"
+                                           accept=".pdf,.doc,.docx">
                                     <small class="text-muted">Kosongkan jika tidak ingin ganti.</small>
                                 </div>
                             </div>

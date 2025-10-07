@@ -42,16 +42,16 @@ class Cuti extends CI_Controller
         $data['user'] = $this->Mcrud->get_users_by_un($ceks);
 
         if ($level == 'superadmin') {
-            $this->db->where_in('status', ['dispo_mpd', 'decline', 'approve','pengajuan']);
+            $this->db->where_in('status', ['dispo_mpd', 'decline', 'approve', 'pengajuan']);
         }
         if ($level == 'petugas') {
             //$this->db->where('status', 'dispo_mpd');
-            $getIdMpdPetugas = $this->db->get_where('tbl_petugas',array('id_user'=>$this->session->userdata('id_user')))
+            $getIdMpdPetugas = $this->db->get_where('tbl_petugas', array('id_user' => $this->session->userdata('id_user')))
                 ->row()->id_petugas;
             //echo $getIdMpdPetugas; die;
             //echo $this->session->userdata('id_user'); die;
-            $this->db->where_in('status', ['dispo_mpd', 'decline', 'approve']);
-            $this->db->where('mpd_id',$getIdMpdPetugas);
+            $this->db->where_in('status', ['dispo_mpd', 'decline', 'approve','pengajuan']);
+            $this->db->where('mpd_id', $getIdMpdPetugas);
             //$this->db->where('petugas', $id_user);
         }
         if ($level == 'notaris') {
@@ -73,6 +73,10 @@ class Cuti extends CI_Controller
         }
 
         $data['getNotaris'] = $this->db->get_where('tbl_data_notaris', array('id_user' => $id_user))->result();
+        if($level=='petugas'){
+            $data['getNotaris'] = $this->db->get('tbl_data_notaris')->result();
+            //echo "<pre>"; print_r($data['getNotaris']); die;
+        }
 
         if ($aksi == 't') {
             if ($level != 'notaris') {
@@ -97,7 +101,7 @@ class Cuti extends CI_Controller
             if ($data['query']->id_cuti == '') {
                 redirect('404');
             }
-        } else if($aksi == 'e'){
+        } else if ($aksi == 'e') {
             $p = "edit";
             $data['judul_web'] = "EDIT CUTI";
             $data['query'] = $this->db->get_where("tbl_cuti", array('id_cuti' => "$id"))->row();
@@ -107,8 +111,8 @@ class Cuti extends CI_Controller
                 $row = $cek_data->row();
 
                 // hanya boleh hapus jika status = pengajuan
-                $allowed_status_todelete =['pengajuan','approve','decline','dispo_mpd'];
-                if (!in_array($row->status,$allowed_status_todelete)) {
+                $allowed_status_todelete = ['pengajuan', 'approve', 'decline', 'dispo_mpd'];
+                if (!in_array($row->status, $allowed_status_todelete)) {
                     redirect('404');
                 }
 
@@ -159,6 +163,7 @@ class Cuti extends CI_Controller
 
         }
 
+        $data['level'] = $this->session->userdata('level');
         $this->load->view('users/header', $data);
         $this->load->view("users/cuti/$p", $data);
         $this->load->view('users/footer');
@@ -271,15 +276,16 @@ class Cuti extends CI_Controller
         }
 
         if (isset($_POST['btnupdate'])) {
+            //echo "brekele"; die;
             $simpan = 'y';
-            $pesan  = '';
+            $pesan = '';
 
-            $id_cuti    = $this->input->post('id_cuti'); // pastikan ada hidden input di form
-            $alasan     = htmlentities(strip_tags($this->input->post('alasan_cuti')));
+            $id_cuti = $this->input->post('id_cuti'); // pastikan ada hidden input di form
+            $alasan = htmlentities(strip_tags($this->input->post('alasan_cuti')));
             $keterangan = htmlentities(strip_tags($this->input->post('ket_laporan')));
-            $tgl_awal   = htmlentities(strip_tags($this->input->post('tgl_awal_cuti')));
-            $tgl_akhir  = htmlentities(strip_tags($this->input->post('tgl_akhir_cuti')));
-            $jml_hari   = preg_replace('/[^0-9]/', '', $this->input->post('jumlah_hari'));
+            $tgl_awal = htmlentities(strip_tags($this->input->post('tgl_awal_cuti')));
+            $tgl_akhir = htmlentities(strip_tags($this->input->post('tgl_akhir_cuti')));
+            $jml_hari = preg_replace('/[^0-9]/', '', $this->input->post('jumlah_hari'));
             $id_pemohon = htmlentities(strip_tags($this->input->post('id_pemohon')));
 
             $getMpdId = $this->db->get_where('tbl_data_notaris', ['id_user' => $id_pemohon])->row()->mpd_area_id;
@@ -289,22 +295,23 @@ class Cuti extends CI_Controller
 
             // daftar kolom file
             $fields = [
-                'surat_permohonan_cuti'          => 'Surat Permohonan Cuti',
-                'sk_pengangkatan_notaris'        => 'SK Pengangkatan Notaris',
-                'berita_acara_sumpah'            => 'Berita Acara Sumpah',
-                'sertifikat_cuti_asli'           => 'Sertifikat Cuti Asli',
+                'surat_permohonan_cuti' => 'Surat Permohonan Cuti',
+                'sk_pengangkatan_notaris' => 'SK Pengangkatan Notaris',
+                'berita_acara_sumpah' => 'Berita Acara Sumpah',
+                'sertifikat_cuti_asli' => 'Sertifikat Cuti Asli',
                 'surat_penunjukan_notaris_pengganti' => 'Surat Penunjukan Notaris Pengganti',
-                'lamp_syarat_cuti'               => 'Dokumen Pendukung Lainnya'
+                'lamp_syarat_cuti' => 'Dokumen Pendukung Lainnya',
+                'sk_cuti_bympd' => 'SK Cuti oleh MPD'
             ];
 
             $uploadData = [];
-            $lokasi     = 'file/cuti_files/';
+            $lokasi = 'file/cuti_files/';
 
             foreach ($fields as $field => $label) {
                 if ($_FILES[$field]['error'] <> 4) { // ada file baru
                     if (!$this->upload->do_upload($field)) {
                         $simpan = 'n';
-                        $pesan  = htmlentities(strip_tags($this->upload->display_errors('<p>', '</p>')));
+                        $pesan = htmlentities(strip_tags($this->upload->display_errors('<p>', '</p>')));
                         break;
                     } else {
                         // hapus file lama kalau ada
@@ -313,7 +320,7 @@ class Cuti extends CI_Controller
                         }
 
                         // simpan file baru
-                        $gbr      = $this->upload->data();
+                        $gbr = $this->upload->data();
                         $filename = $lokasi . preg_replace('/\s+/', '_', $gbr['file_name']);
                         $uploadData[$field] = $filename;
                     }
@@ -322,15 +329,15 @@ class Cuti extends CI_Controller
 
             if ($simpan == 'y') {
                 $dataUpdate = [
-                    'alasan'                => $alasan ?? "",
-                    'keterangan'            => $keterangan ?? "",
-                    'user_id'               => $id_pemohon,
-                    'mpd_id'                => $getMpdId ?? '',
-                    'tgl_awal'              => $tgl_awal,
-                    'tgl_akhir'             => $tgl_akhir,
-                    'jml_hari_cuti'         => $jml_hari,
-                    'status'                => 'pengajuan',
-                    'updated_at'            => date('Y-m-d H:i:s')
+                    'alasan' => $alasan ?? "",
+                    'keterangan' => $keterangan ?? "",
+                    'user_id' => $id_pemohon,
+                    'mpd_id' => $getMpdId ?? '',
+                    'tgl_awal' => $tgl_awal,
+                    'tgl_akhir' => $tgl_akhir,
+                    'jml_hari_cuti' => $jml_hari,
+                    'status' => 'pengajuan',
+                    'updated_at' => date('Y-m-d H:i:s')
                 ];
 
                 // merge upload data (replace hanya yg diupload baru)
@@ -365,13 +372,13 @@ class Cuti extends CI_Controller
         if (isset($_POST['btnupdate_status'])) {
             //echo "prity"; die;
             $id_cuti = $this->input->post('id_cuti');
-            $aksi    = $this->input->post('aksi');
+            $aksi = $this->input->post('aksi');
             //echo $id_cuti; die;
             //echo $aksi; die;
             if (!empty($id_cuti) && !empty($aksi)) {
                 $this->db->where('id_cuti', $id_cuti);
                 $this->db->update('tbl_cuti', [
-                    'status'     => $aksi,
+                    'status' => $aksi,
                     'updated_at' => date('Y-m-d H:i:s')
                 ]);
 
@@ -400,27 +407,82 @@ class Cuti extends CI_Controller
         // ---- Update Status Cuti dari Modal (Petugas) ----
         if (isset($_POST['btnupdate_status_bympd'])) {
             $id_cuti = $this->input->post('id_cuti');
-            $aksi    = $this->input->post('aksi');
+            $aksi = $this->input->post('aksi');
             $catatan = $this->input->post('catatan_petugas');
 
-            //echo "<pre>"; print_r($this->input->post()); die;
-
             if (!empty($id_cuti) && !empty($aksi)) {
-                $this->db->where('id_cuti', $id_cuti);
-                $this->db->update('tbl_cuti', [
-                    'status'     => $aksi,
-                    'catatan'    => $catatan,
+
+                // Cek & buat folder jika belum ada
+                $lokasi = 'file/cuti_files/';
+                if (!is_dir(FCPATH . $lokasi)) {
+                    mkdir(FCPATH . $lokasi, 0777, true);
+                }
+
+                // Upload file SK Cuti (opsional)
+                $uploadData = [];
+
+                if (isset($_FILES['sk_cuti_bympd']) && $_FILES['sk_cuti_bympd']['error'] <> 4) {
+                    $file_size = 1024 * 5; // 5 MB
+                    $this->upload->initialize([
+                        "upload_path" => "./$lokasi",
+                        "allowed_types" => "pdf|doc|docx",
+                        "max_size" => "$file_size"
+                    ]);
+
+                    /*ambil file lama*/
+                    $rowLama = $this->db->get_where("tbl_cuti", array('id_cuti' => $id_cuti))->row();
+                    $fileLama = $rowLama->sk_cuti_bympd ?? '';
+                    //echo "<pre>"; print_r($rowLama); die;
+                    //echo $fileLama; die;
+
+                    if ($this->upload->do_upload('sk_cuti_bympd')) {
+                        $gbr = $this->upload->data();
+                        $fileName = preg_replace('/\s+/', '_', $gbr['file_name']);
+                        /*record yamg tersimpan di kolom sk_cuti_bympd di tbl_cuti database*/
+                        $uploadData['sk_cuti_bympd'] = $lokasi . $fileName;
+
+                        /*hapus file lama jika ada dan file-nya eksis*/
+                        if(!empty($fileLama) && file_exists(FCPATH . $fileLama)){
+                            @unlink(FCPATH.$fileLama);
+                        }
+                    } else {
+                        // kalau upload gagal, simpan pesan tapi lanjut update status
+                        $this->session->set_flashdata('msg',
+                            '<div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Perhatian!</strong> File SK Cuti gagal diupload: ' .
+                            htmlentities(strip_tags($this->upload->display_errors('', ''))) . '
+                    </div><br>'
+                        );
+                    }
+                }
+                // 🔹 Data update dasar
+                $dataUpdate = [
+                    'status' => $aksi,
+                    'catatan' => $catatan,
                     'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                ];
+                // Gabungkan data upload (jika ada)
+                if (!empty($uploadData)) {
+                    $dataUpdate = array_merge($dataUpdate, $uploadData);
+                }
+
+                // Simpan ke database
+                $this->db->where('id_cuti', $id_cuti);
+                $this->db->update('tbl_cuti', $dataUpdate);
 
                 $this->session->set_flashdata('msg',
                     '<div class="alert alert-success alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <strong>Sukses!</strong> Status cuti + catatan berhasil diperbarui.
+                <strong>Sukses!</strong> Status cuti + catatan' .
+                    (!empty($uploadData) ? ' + SK Cuti' : '') . ' berhasil diperbarui.
             </div><br>'
                 );
+
             } else {
                 $this->session->set_flashdata('msg',
                     '<div class="alert alert-danger alert-dismissible" role="alert">
