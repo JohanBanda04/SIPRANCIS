@@ -60,51 +60,52 @@ class Web extends CI_Controller
         $tgl = date('Y-m-d H:i:s');
 
         if (isset($_POST['btndaftar'])) {
-            $nama = htmlentities(strip_tags($_POST['nama']));
-            $no_ktp = htmlentities(strip_tags($_POST['no_ktp']));
-            $alamat = htmlentities(strip_tags($_POST['alamat']));
-            $kontak = htmlentities(strip_tags($_POST['kontak']));
-            $email = htmlentities(strip_tags($_POST['email']));
+            $nama     = htmlentities(strip_tags($_POST['nama']));
+            $no_ktp   = htmlentities(strip_tags($_POST['no_ktp']));
+            $alamat   = htmlentities(strip_tags($_POST['alamat']));
+            $kontak   = htmlentities(strip_tags($_POST['kontak']));
+            $email    = htmlentities(strip_tags($_POST['email']));
             $username = htmlentities(strip_tags($_POST['username']));
-            $pass = htmlentities(strip_tags($_POST['password']));
-            $pass2 = htmlentities(strip_tags($_POST['password2']));
+            $pass     = htmlentities(strip_tags($_POST['password']));
+            $pass2    = htmlentities(strip_tags($_POST['password2']));
 
-            $cek_data = $this->db->get_where('tbl_data_user', array('no_ktp' => $no_ktp));
+            $cek_data  = $this->db->get_where('tbl_data_user', array('no_ktp' => $no_ktp));
             $cek_data2 = $this->db->get_where('tbl_user', array('username' => $username));
             $simpan = 'y';
-            $pesan = '';
+            $pesan  = '';
             if ($cek_data->num_rows() != 0) {
                 $simpan = 'n';
-                $pesan = "No. NIK '<b>$no_ktp</b>' Sudah Terdaftar!";
+                $pesan  = "No. NIK '<b>$no_ktp</b>' Sudah Terdaftar!";
             } elseif ($cek_data2->num_rows() != 0) {
                 $simpan = 'n';
-                $pesan = "Username '<b>$username</b>' Sudah Terdaftar!";
+                $pesan  = "Username '<b>$username</b>' Sudah Terdaftar!";
             } else {
                 if ($pass != $pass2) {
                     $simpan = 'n';
-                    $pesan = "Password tidak cocok!";
+                    $pesan  = "Password tidak cocok!";
                 }
             }
             $level = 'user';
             if ($simpan == 'y') {
+                // NOTE: menyimpan apa adanya (plaintext) agar kompatibel dengan sistem lama
                 $data = array(
                     'nama_lengkap' => $nama,
-                    'username' => $username,
-                    'password' => $pass,
-                    'level' => $level,
-                    'tgl_daftar' => $tgl,
-                    'aktif' => '1',
-                    'dihapus' => 'tidak'
+                    'username'     => $username,
+                    'password'     => $pass,
+                    'level'        => $level,
+                    'tgl_daftar'   => $tgl,
+                    'aktif'        => '1',
+                    'dihapus'      => 'tidak'
                 );
                 $this->db->insert('tbl_user', $data);
 
                 $id_user = $this->db->insert_id();
                 $data2 = array(
-                    'no_ktp' => $no_ktp,
-                    'nama' => $nama,
-                    'alamat' => $alamat,
-                    'kontak' => $kontak,
-                    'email' => $email,
+                    'no_ktp'  => $no_ktp,
+                    'nama'    => $nama,
+                    'alamat'  => $alamat,
+                    'kontak'  => $kontak,
+                    'email'   => $email,
                     'id_user' => $id_user
                 );
                 $this->db->insert('tbl_data_user', $data2);
@@ -133,102 +134,123 @@ class Web extends CI_Controller
 
     }
 
-
     public function login()
     {
-        $ceks = $this->session->userdata('username');
-        if (isset($ceks)) {
-            redirect('dashboard');
-        } else {
-            $data['judul_web'] = "Halaman Login - " . $this->Mcrud->judul_web();
-            $this->load->view('web/log/header', $data);
-            $this->load->view('web/log/login', $data);
-            $this->load->view('web/log/footer', $data);
+        // Jika sudah login, arahkan sesuai role (bukan selalu ke /dashboard)
+        if ($this->session->userdata('username')) {
+            $level = $this->session->userdata('level');
+            switch ($level) {
+                case 'sekretariat_mkn': redirect('sekretariat_mkn');       return;
+                case 'anggota_mkn':     redirect('anggota_mkn');           return;
+                case 'aph':             redirect('aph/pengajuan');         return;
+                case 'admin':           redirect('admin/dashboard');       return;
+                case 'user':            redirect('user/dashboard');        return;
+                default:                redirect('dashboard');             return;
+            }
+        }
 
-            if (isset($_POST['btnlogin'])) {
-                $username = htmlentities(strip_tags($_POST['username']));
-                $pass = htmlentities(strip_tags($_POST['password']));
+        $data['judul_web'] = "Halaman Login - " . $this->Mcrud->judul_web();
+        $this->load->view('web/log/header', $data);
+        $this->load->view('web/log/login', $data);
+        $this->load->view('web/log/footer', $data);
 
-                $query = $this->Mcrud->get_users_by_un($username);
-                $cek = $query->result();
-                $cekun = $cek[0]->username;
-                $jumlah = $query->num_rows();
+        if (isset($_POST['btnlogin'])) {
+            $username = htmlentities(strip_tags($this->input->post('username', true)));
+            $pass     = htmlentities(strip_tags($this->input->post('password', true)));
 
-                if ($jumlah == 0) {
-                    $this->session->set_flashdata('msg',
-                        '<div class="alert alert-danger alert-dismissible" role="alert">
-                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                 <span aria-hidden="true">&times;</span>
-                             </button>
-                             <strong>Username "' . $username . '"</strong> belum terdaftar.
-                         </div>'
-                    );
-                    redirect('web/login');
-                } elseif ($query->row()->aktif == '0') {
-                    if ($query->row()->level == 'user') {
-                        $email = $this->db->get_where('tbl_data_user', array('id_user' => $query->row()->id_user))->row()->email;
-                        $tgl = date('Y-m-d');
-                        $id = md5("$email * $tgl");
-                        $link = base_url() . "web/verify/$id/$email/kirim";
-                        $pesan = "belum diaktifkan, Aktifkan Akun dengan cara Klik => <b><a href='$link'>Kirim Aktivasi Akun ke email</a></b>";
-                    } else {
-                        $pesan = "tidak aktif";
-                    }
-                    $this->session->set_flashdata('msg',
-                        '<div class="alert alert-danger alert-dismissible" role="alert">
-                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                 <span aria-hidden="true">&times;</span>
-                             </button>
-                             <strong>Username "' . $username . '"</strong> ' . $pesan . '.
-                         </div>'
-                    );
-                    redirect('web/login');
+            $query  = $this->Mcrud->get_users_by_un($username);
+            $jumlah = $query->num_rows();
+
+            // Cegah akses index sebelum jumlah dicek
+            if ($jumlah == 0) {
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-danger alert-dismissible" role="alert">
+                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                         <strong>Username "' . html_escape($username) . '"</strong> belum terdaftar.
+                     </div>'
+                );
+                redirect('web/login');
+            }
+
+            $row = $query->row();
+
+            // Akun belum aktif
+            if ($row->aktif == '0') {
+                if ($row->level == 'user') {
+                    $email = $this->db->get_where('tbl_data_user', array('id_user' => $row->id_user))->row()->email;
+                    $tgl   = date('Y-m-d');
+                    $id    = md5("$email * $tgl");
+                    $link  = base_url() . "web/verify/$id/$email/kirim";
+                    $pesan = "belum diaktifkan, Aktifkan Akun dengan cara Klik => <b><a href='$link'>Kirim Aktivasi Akun ke email</a></b>";
                 } else {
-                    $row = $query->row();
-                    $cekpass = $row->password;
-                    if ($cekpass <> $pass) {
-                        $this->session->set_flashdata('msg',
-                            '<div class="alert alert-warning alert-dismissible" role="alert">
-                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                     <span aria-hidden="true">&times;</span>
-                                 </button>
-                                 <strong>Username atau Password Salah!</strong>.
-                             </div>'
-                        );
-                        redirect('web/login');
-                    } else {
-                        $this->session->set_userdata('username', "$cekun");
-                        $this->session->set_userdata('id_user', "$row->id_user");
-                        $this->session->set_userdata('level', "$row->level");
-                        $this->session->set_userdata('jml_notif_bell', "0");
-
-                        // 🔥 Redirect sesuai role
-                        switch ($row->level) {
-                            case 'sekretariat_mkn':
-                                redirect('sekretariat/dashboard');
-                                break;
-                            case 'anggota_mkn':
-                                redirect('anggota/dashboard');
-                                break;
-                            case 'aph':
-                                redirect('aph/dashboard');
-                                break;
-                            case 'admin':
-                                redirect('admin/dashboard');
-                                break;
-                            case 'user':
-                                redirect('user/dashboard');
-                                break;
-                            default:
-                                redirect('dashboard');
-                                break;
-                        }
-                    }
+                    $pesan = "tidak aktif";
                 }
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-danger alert-dismissible" role="alert">
+                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                         <strong>Username "' . html_escape($username) . '"</strong> ' . $pesan . '.
+                     </div>'
+                );
+                redirect('web/login');
+            }
+
+            // Verifikasi password
+            // Kompatibel: plaintext (lama) atau MD5 (seed awal).
+            $pass_match = false;
+            if ($row->password === $pass) {
+                $pass_match = true;
+            } elseif ($row->password === md5($pass)) {
+                $pass_match = true;
+            }
+
+            if (!$pass_match) {
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-warning alert-dismissible" role="alert">
+                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                         <strong>Username atau Password Salah!</strong>.
+                     </div>'
+                );
+                redirect('web/login');
+            }
+
+            // Set session lengkap
+            $this->session->set_userdata([
+                'username'       => $row->username,
+                'id_user'        => $row->id_user,
+                'level'          => $row->level,
+                'jml_notif_bell' => "0",
+                'logged_in'      => TRUE,
+            ]);
+
+            // Redirect sesuai role (rute baru MKN + role lain tetap)
+            switch ($row->level) {
+                case 'sekretariat_mkn':
+                    redirect('sekretariat_mkn');        // Sekretariat_mkn::index
+                    break;
+                case 'anggota_mkn':
+                    redirect('anggota_mkn');            // Anggota_mkn::index
+                    break;
+                case 'aph':
+                    redirect('aph/pengajuan');          // Aph::form_pengajuan
+                    break;
+                case 'admin':
+                    redirect('admin/dashboard');
+                    break;
+                case 'user':
+                    redirect('user/dashboard');
+                    break;
+                default:
+                    redirect('dashboard');
+                    break;
             }
         }
     }
-
 
     public function logout()
     {
@@ -247,7 +269,7 @@ class Web extends CI_Controller
     {
         date_default_timezone_set('Asia/Jakarta');
         $id_user = $this->session->userdata('id_user');
-        $level = $this->session->userdata('level');
+        $level   = $this->session->userdata('level');
 
         $this->db->order_by('id_notif', 'DESC');
         $data['query'] = $this->db->get_where('tbl_notif', array('penerima' => $id_user));
@@ -265,11 +287,7 @@ class Web extends CI_Controller
         $data['jml_notif'] = $jml_notif_baru;
         if ($aksi == 'pesan_baru') {
             $jml_notif_bell = $this->session->userdata('jml_notif_bell');
-            if ($jml_notif_bell >= $jml_notif_baru) {
-                $stt = '0';
-            } else {
-                $stt = '1';
-            }
+            $stt = ($jml_notif_bell >= $jml_notif_baru) ? '0' : '1';
             $this->session->set_userdata('jml_notif_bell', "$jml_notif_baru");
             if ($id_user == '') {
                 echo '11';
@@ -285,15 +303,15 @@ class Web extends CI_Controller
 
     public function notif($aksi = '', $id = '')
     {
-        $id = hashids_decrypt($id);
-        $level = $this->session->userdata('level');
-        $ceks = $this->session->userdata('username');
-        $id_user = $this->session->userdata('id_user');
+        $id     = hashids_decrypt($id);
+        $level  = $this->session->userdata('level');
+        $ceks   = $this->session->userdata('username');
+        $id_user= $this->session->userdata('id_user');
         if (!isset($ceks)) {
             redirect('web/login');
         } else {
-            $data['user'] = $this->Mcrud->get_users_by_un($ceks);
-            $data['users'] = $this->Mcrud->get_users();
+            $data['user']      = $this->Mcrud->get_users_by_un($ceks);
+            $data['users']     = $this->Mcrud->get_users();
             $data['judul_web'] = "Notifikasi";
 
             $this->db->order_by('id_notif', 'DESC');
