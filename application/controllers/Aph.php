@@ -3,133 +3,117 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Aph extends CI_Controller {
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
-        // Pastikan user sudah login dan rolenya APH
+        if (!$this->session->userdata('username')) {
+            redirect('web/login');
+        }
         if ($this->session->userdata('level') != 'aph') {
             redirect('web/login');
         }
 
-        // Load helper, library, dan database
-        $this->load->helper(['form', 'url']);
-        $this->load->library(['session', 'upload']);
-        $this->load->database();
+        $this->load->model('Mcrud');
+        $this->load->model('Mkn_model');
     }
 
-    /* ---------------------------------------------------------------------
-     * DASHBOARD APH
-     * -------------------------------------------------------------------*/
-    public function dashboard()
-    {
-        $id_user = $this->session->userdata('id_user');
-        // Kirim result object agar kompatibel dengan header.php
-        $data['user'] = $this->db->get_where('tbl_user', ['id_user' => $id_user]);
-        $data['title'] = 'Dashboard APH';
+    public function form_pengajuan() {
+        $ceks = $this->session->userdata('username');
 
-        // Ambil daftar perkara milik APH login
-        $data['perkara'] = $this->db->where('id_aph', $id_user)
-                                   ->order_by('created_at', 'DESC')
-                                   ->get('tbl_perkara')
-                                   ->result();
+        $data['judul_web'] = 'Form Pengajuan Perkara - ' . $this->Mcrud->judul_web();
+        $data['user']      = $this->Mcrud->get_users_by_un($ceks); // untuk header.php
+
+        // (opsional) tampilkan riwayat pengajuan user APH ini
+        // $data['riwayat'] = $this->Mkn_model->getByUser($this->session->userdata('id_user'));
 
         $this->load->view('users/header', $data);
-        $this->load->view('users/aph', $data);
-        $this->load->view('users/footer', $data);
+        $this->load->view('aph/form_pengajuan', $data);
+        $this->load->view('users/footer');
     }
 
-    /* ---------------------------------------------------------------------
-     * TAMPIL FORM TAMBAH PERMOHONAN
-     * -------------------------------------------------------------------*/
-    public function tambah_permohonan()
+    public function simpan_pengajuan()
     {
-        $id_user = $this->session->userdata('id_user');
-        $data['user']      = $this->db->get_where('tbl_user', ['id_user' => $id_user]);
-        $data['judul_web'] = 'Tambah Permohonan Pemeriksaan';
-
-        $this->load->view('users/header', $data);
-        $this->load->view('users/aph_tambah_permohonan', $data);
-        $this->load->view('users/footer', $data);
-    }
-
-    /* ---------------------------------------------------------------------
-     * SIMPAN PERMOHONAN (HANDLE SUBMIT FORM)
-     * -------------------------------------------------------------------*/
-    public function simpan_permohonan()
-    {
-        // Pastikan request method adalah POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->session->set_flashdata('error', 'Permintaan tidak valid.');
-            redirect('aph/tambah_permohonan');
-            return;
+        // wajib login & role
+        if (!$this->session->userdata('username') || $this->session->userdata('level') !== 'aph') {
+            redirect('web/login');
         }
 
-        /* ================================================================
-         * AUTO BUAT FOLDER UPLOAD (JIKA BELUM ADA)
-         * ================================================================ */
-        $upload_path = FCPATH . 'uploads/permohonan/';
-
-        if (!is_dir($upload_path)) {
-            // Buat folder uploads jika belum ada
-            if (!is_dir(FCPATH . 'uploads')) {
-                mkdir(FCPATH . 'uploads', 0777, TRUE);
-            }
-
-            // Buat folder permohonan di dalam uploads
-            if (mkdir($upload_path, 0777, TRUE)) {
-                // Tambahkan file index.html agar folder aman (tidak bisa diakses langsung)
-                file_put_contents($upload_path . 'index.html', '<!-- Silence is golden -->');
-            } else {
-                $this->session->set_flashdata('error', 'Gagal membuat folder upload. Periksa izin folder.');
-                redirect('aph/tambah_permohonan');
-                return;
-            }
+        /** =========================
+         *  SETUP UPLOAD YANG AMAN
+         *  ========================= */
+        // Pastikan folder ada
+        $baseDir = FCPATH . 'uploads' . DIRECTORY_SEPARATOR . 'mkn';
+        if (!is_dir($baseDir)) {
+            @mkdir($baseDir, 0777, true);
         }
 
-        /* ================================================================
-         * KONFIGURASI UPLOAD
-         * ================================================================ */
-        $config['upload_path']   = $upload_path;
-        $config['allowed_types'] = 'pdf|jpg|jpeg|png';
-        $config['max_size']      = 3072; // 3MB
-        $config['encrypt_name']  = TRUE;
-
-        $this->upload->initialize($config);
-
-        // Proses upload file
-        if (!$this->upload->do_upload('lampiran_surat')) {
-            $this->session->set_flashdata('error', $this->upload->display_errors('<div class="text-danger">', '</div>'));
-            redirect('aph/tambah_permohonan');
-            return;
+        // Normalisasi path absolut & trailing slash (penting di Windows)
+        $absPath = realpath($baseDir);                 // contoh: C:\xampp74\htdocs\SIPRANCIS\uploads\mkn
+        if ($absPath === false) {                      // jika realpath gagal (folder baru dibuat)
+            $absPath = rtrim($baseDir, "\\/");
         }
+        $absPath = str_replace('\\', '/', $absPath);   // gunakan forward slash
+        $absPath = rtrim($absPath, '/') . '/';         // wajib akhiri dengan '/'
 
-        /* ================================================================
-         * UPLOAD SUKSES → SIMPAN DATA KE DATABASE
-         * ================================================================ */
-        $upload_data = $this->upload->data();
-
-        $data_insert = [
-            'id_aph'         => $this->session->userdata('id_user'),
-            'nama_notaris'   => $this->input->post('nama_notaris', TRUE),
-            'alamat_notaris' => $this->input->post('alamat_notaris', TRUE),
-            'kronologi'      => $this->input->post('kronologi', TRUE),
-            'nomor_akta'     => $this->input->post('nomor_akta', TRUE),
-            'tahapan'        => $this->input->post('tahapan', TRUE),
-            'lampiran_surat' => $upload_data['file_name'],
-            'status_perkara' => 'aktif',
-            'created_at'     => date('Y-m-d H:i:s'),
-            'updated_at'     => date('Y-m-d H:i:s')
+        // Konfigurasi upload
+        $config = [
+            'upload_path'   => $absPath,               // path absolut ke folder
+            'allowed_types' => 'pdf|jpg|jpeg|png',
+            'max_size'      => 4096,                   // KB
+            'encrypt_name'  => TRUE,
         ];
 
-        $insert = $this->db->insert('tbl_perkara', $data_insert);
+        $this->load->library('upload');
+        $this->upload->initialize($config);
 
-        if ($insert) {
-            $this->session->set_flashdata('success', '✅ Permohonan berhasil dikirim.');
-        } else {
-            $this->session->set_flashdata('error', '❌ Gagal menyimpan data ke database.');
+        // Proses upload (opsional)
+        $file_name = null;
+        if (!empty($_FILES['lampiran']['name'])) {
+            if (!$this->upload->do_upload('lampiran')) {
+                $this->session->set_flashdata('msg',
+                    '<div class="alert alert-danger"><b>Upload gagal.</b><br>'
+                    . $this->upload->display_errors('', '') . '<br>'
+                    . 'Path yang dipakai: <code>' . html_escape($absPath) . '</code></div>'
+                );
+                redirect('aph/pengajuan');
+            }
+            // simpan path relatif untuk dipakai di view (base_url)
+            $file_name = 'uploads/mkn/' . $this->upload->data('file_name');
         }
 
-        redirect('aph/dashboard');
+        // Validasi minimal
+        $nama_notaris   = $this->input->post('nama_notaris', true);
+        $alamat_notaris = $this->input->post('alamat_notaris', true);
+        $kronologi      = $this->input->post('kronologi', true);
+        $nomor_akta     = $this->input->post('nomor_akta', true);
+
+        if (!$nama_notaris || !$alamat_notaris || !$kronologi) {
+            // hapus file kalau sempat ter-upload
+            if ($file_name && file_exists(FCPATH.$file_name)) @unlink(FCPATH.$file_name);
+            $this->session->set_flashdata('msg',
+                '<div class="alert alert-warning">Form belum lengkap.</div>'
+            );
+            redirect('aph/pengajuan');
+        }
+
+        // Simpan ke DB
+        $data_insert = [
+            'id_user_pengaju' => $this->session->userdata('id_user'),
+            'nama_notaris'    => $nama_notaris,
+            'alamat_notaris'  => $alamat_notaris,
+            'kronologi'       => $kronologi,
+            'nomor_akta'      => $nomor_akta,
+            'lampiran_surat'  => $file_name,
+            'tahapan'         => 'penyelidikan',
+            'status'          => 'pending',
+            'tgl_pengajuan'   => date('Y-m-d H:i:s'),
+        ];
+
+        $this->Mkn_model->insertPerkara($data_insert);
+
+        $this->session->set_flashdata('msg',
+            '<div class="alert alert-success">Pengajuan berhasil disimpan.</div>'
+        );
+        redirect('aph/pengajuan');
     }
 }
