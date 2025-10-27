@@ -144,7 +144,7 @@ class Web extends CI_Controller
                 case 'anggota_mkn':     redirect('anggota_mkn');           return;
                 case 'aph':             redirect('aph/pengajuan');         return;
                 case 'admin':           redirect('admin/dashboard');       return;
-                case 'user':            redirect('user/dashboard');        return;
+                case 'user': redirect('dashboard'); return; // was: redirect('user/dashboard');
                 default:                redirect('dashboard');             return;
             }
         }
@@ -242,9 +242,9 @@ class Web extends CI_Controller
                 case 'admin':
                     redirect('admin/dashboard');
                     break;
-                case 'user':
-                    redirect('user/dashboard');
-                    break;
+                    case 'user':
+                        redirect('dashboard'); // was: redirect('user/dashboard');
+                        break;                
                 default:
                     redirect('dashboard');
                     break;
